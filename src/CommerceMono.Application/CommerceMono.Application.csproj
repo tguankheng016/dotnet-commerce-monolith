@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommerceMono.Modules.Core\CommerceMono.Modules.Core.csproj" />
+    <ProjectReference Include="..\CommerceMono.Modules.Postgres\CommerceMono.Modules.Postgres.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
