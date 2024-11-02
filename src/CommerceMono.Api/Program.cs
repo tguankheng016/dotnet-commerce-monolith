@@ -1,4 +1,5 @@
-using Scalar.AspNetCore;
+using CommerceMono.Api;
+using CommerceMono.Application.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,20 +11,12 @@ builder.Host.UseDefaultServiceProvider((context, options) =>
 	options.ValidateOnBuild = true;
 });
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var assembly = typeof(IApplicationRoot).Assembly;
+
+builder.AddInfrastructure(assembly);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-	// app.UseSwagger();
-	// app.UseSwaggerUI();
-	app.UseSwagger(options =>
-	{
-		options.RouteTemplate = "/openapi/{documentName}.json";
-	});
-	app.MapScalarApiReference();
-}
+app.UseInfrastructure();
 
 app.Run();

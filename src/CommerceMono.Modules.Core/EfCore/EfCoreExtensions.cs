@@ -1,12 +1,26 @@
 using System.Linq.Expressions;
 using CommerceMono.Modules.Core.Domain;
+using CommerceMono.Modules.Core.Persistences;
+using Humanizer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CommerceMono.Modules.Core.EfCore;
 
 public static class EfCoreExtensions
 {
+	public static void ToSnakeCaseTableNames(this ModelBuilder modelBuilder)
+	{
+		foreach (var entity in modelBuilder.Model.GetEntityTypes())
+		{
+			// Replace table names
+			entity.SetTableName(entity.GetTableName()?.Underscore());
+		}
+	}
+
 	public static void SetSoftDeletedFilter(this ModelBuilder modelBuilder)
 	{
 		Expression<Func<ISoftDelete, bool>> filterExpr = e => !e.IsDeleted;
@@ -22,6 +36,33 @@ public static class EfCoreExtensions
 
 			// set filter
 			mutableEntityType.SetQueryFilter(lambdaExpression);
+		}
+	}
+
+	public static IApplicationBuilder UseMigration<TContext>(this IApplicationBuilder app)
+		where TContext : DbContext, IDbContext
+	{
+		MigrateDatabaseAsync<TContext>(app.ApplicationServices).GetAwaiter().GetResult();
+		SeedDataAsync(app.ApplicationServices).GetAwaiter().GetResult();
+
+		return app;
+	}
+
+	private static async Task MigrateDatabaseAsync<TContext>(IServiceProvider serviceProvider)
+		where TContext : DbContext, IDbContext
+	{
+		using var scope = serviceProvider.CreateScope();
+		var context = scope.ServiceProvider.GetRequiredService<TContext>();
+		await context.Database.MigrateAsync();
+	}
+
+	private static async Task SeedDataAsync(IServiceProvider serviceProvider)
+	{
+		using var scope = serviceProvider.CreateScope();
+		var seeders = scope.ServiceProvider.GetServices<IDataSeeder>();
+		foreach (var seeder in seeders)
+		{
+			await seeder.SeedAllAsync();
 		}
 	}
 }

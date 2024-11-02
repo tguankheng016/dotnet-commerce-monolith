@@ -28,6 +28,7 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 		base.OnModelCreating(builder);
 		builder.SetSoftDeletedFilter();
+		builder.ToSnakeCaseTableNames();
 	}
 
 	public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)

@@ -4,6 +4,10 @@ namespace CommerceMono.Modules.Postgres;
 
 public class PostgresOptions
 {
-    public required string ConnectionString { get; set; }
+	public string ConnectionString { get; set; }
 
+	public PostgresOptions()
+	{
+		ConnectionString = "";
+	}
 }

@@ -3,16 +3,22 @@
   <ItemGroup>
     <ProjectReference Include="..\CommerceMono.Modules.Core\CommerceMono.Modules.Core.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Postgres\CommerceMono.Modules.Postgres.csproj" />
+    <ProjectReference Include="..\CommerceMono.Modules.Web\CommerceMono.Modules.Web.csproj" />
+    <ProjectReference Include="..\CommerceMono.Modules.Dapper\CommerceMono.Modules.Dapper.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data/Seed/" />
+    <Folder Include="Data/Migrations/" />
     <Folder Include="Identities/" />
     <Folder Include="Roles/Dtos/" />
     <Folder Include="Roles/Features/" />
     <Folder Include="Users/Dtos/" />
     <Folder Include="Users/Features/" />
     <Folder Include="Users/Services/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Scalar.AspNetCore" Version="1.2.29" />
   </ItemGroup>
 
   <PropertyGroup>
