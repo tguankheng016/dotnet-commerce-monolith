@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E831D596-11B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{27EF80D9-F0D1-47C2-BEDD-310E2A413F0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Api.csproj", "{1C3AE5EC-CB6F-4033-AF4F-44F5BD56DD38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Api", "src\CommerceMono.Api\CommerceMono.Api.csproj", "{1C3AE5EC-CB6F-4033-AF4F-44F5BD56DD38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{2531F3C6-9CCD-46E0-B91C-AC707F90C9B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Application", "src\CommerceMono.Application\CommerceMono.Application.csproj", "{2531F3C6-9CCD-46E0-B91C-AC707F90C9B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
