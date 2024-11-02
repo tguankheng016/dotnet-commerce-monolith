@@ -5,6 +5,16 @@
     <ProjectReference Include="..\CommerceMono.Modules.Postgres\CommerceMono.Modules.Postgres.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data/Seed/" />
+    <Folder Include="Identities/" />
+    <Folder Include="Roles/Dtos/" />
+    <Folder Include="Roles/Features/" />
+    <Folder Include="Users/Dtos/" />
+    <Folder Include="Users/Features/" />
+    <Folder Include="Users/Services/" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

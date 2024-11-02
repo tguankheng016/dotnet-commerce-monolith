@@ -26,6 +26,11 @@
     "**/node_modules/*/**": true,
     "**/node/node_modules/*/**": true,
     "*/.git/objects/": true,
-    "**/.angular/**": true
+    "**/.angular/**": true,
+    "**/bin": true,
+    "**/obj": true,
+    "bin": true,
+    "obj": true,
+    "**/.idea": true
   }
 }

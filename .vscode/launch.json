@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Api",
+      "name": "CommerceMono.Api",
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/src/CommerceMono.Api/CommerceMono.Api.csproj",
