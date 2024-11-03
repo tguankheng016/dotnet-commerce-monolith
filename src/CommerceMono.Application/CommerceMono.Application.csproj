@@ -5,11 +5,13 @@
     <ProjectReference Include="..\CommerceMono.Modules.Postgres\CommerceMono.Modules.Postgres.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Web\CommerceMono.Modules.Web.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Dapper\CommerceMono.Modules.Dapper.csproj" />
+    <ProjectReference Include="..\CommerceMono.Modules.Caching\CommerceMono.Modules.Caching.csproj" />
+    <ProjectReference Include="..\CommerceMono.Modules.Security\CommerceMono.Modules.Security.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Data/Migrations/" />
-    <Folder Include="Identities/" />
+    <Folder Include="Identities/Dtos/" />
     <Folder Include="Roles/Dtos/" />
     <Folder Include="Roles/Features/" />
     <Folder Include="Users/Dtos/" />

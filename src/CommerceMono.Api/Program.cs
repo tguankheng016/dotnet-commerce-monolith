@@ -12,7 +12,6 @@ builder.Host.UseDefaultServiceProvider((context, options) =>
 });
 
 var assembly = typeof(IApplicationRoot).Assembly;
-
 builder.AddInfrastructure(assembly);
 
 var app = builder.Build();

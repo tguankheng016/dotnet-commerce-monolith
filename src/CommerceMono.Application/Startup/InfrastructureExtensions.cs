@@ -2,13 +2,17 @@ using System.Reflection;
 using System.Threading.RateLimiting;
 using CommerceMono.Application.Data;
 using CommerceMono.Application.Data.Seed;
+using CommerceMono.Application.Identities.Services;
 using CommerceMono.Application.Roles.Models;
 using CommerceMono.Application.Users.Models;
+using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Core.Dependencies;
 using CommerceMono.Modules.Core.EfCore;
+using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Core.Persistences;
 using CommerceMono.Modules.Dapper;
 using CommerceMono.Modules.Postgres;
+using CommerceMono.Modules.Security;
 using CommerceMono.Modules.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -25,10 +29,13 @@ public static class InfrastructureExtensions
 	{
 		var configuration = builder.Configuration;
 		var env = builder.Environment;
+		assembly = typeof(InfrastructureExtensions).Assembly;
 
 		builder.Services.AddDefaultDependencyInjection(assembly);
 
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
+		builder.Services.AddScoped<ITokenKeyDbValidator, TokenKeyDbValidator>();
+		builder.Services.AddScoped<ITokenSecurityStampDbValidator, TokenSecurityStampDbValidator>();
 
 		builder.Services.AddRateLimiter(options =>
 		{
@@ -54,6 +61,10 @@ public static class InfrastructureExtensions
 		builder.Services.AddNpgDbContext<AppDbContext>();
 		builder.Services.AddCustomDapper();
 
+		builder.Services.AddCustomEasyCaching();
+
+		builder.Services.AddProblemDetails();
+
 		builder.Services.AddIdentity<User, Role>(config =>
 			{
 				config.Password.RequiredLength = 6;
@@ -62,6 +73,8 @@ public static class InfrastructureExtensions
 				config.Password.RequireUppercase = false;
 			}
 		).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+		builder.Services.AddCustomJwtTokenHandler();
+		builder.Services.AddCustomJwtAuthentication();
 
 		builder.Services.Configure<ForwardedHeadersOptions>(options =>
 		{
@@ -74,13 +87,21 @@ public static class InfrastructureExtensions
 
 	public static WebApplication UseInfrastructure(this WebApplication app)
 	{
-
 		app.UseForwardedHeaders();
+
+		app.UseCustomProblemDetails();
 
 		app.UseMigration<AppDbContext>();
 
 		app.UseRateLimiter();
 
+		app.UseAuthentication();
+
+		app.UseJwtTokenMiddleware();
+
+		app.UseAuthorization();
+
+		// TODO: Wait Scalar To Fix Empty Body Issue
 		app.UseSwagger(options =>
 		{
 			options.RouteTemplate = "/openapi/{documentName}.json";
