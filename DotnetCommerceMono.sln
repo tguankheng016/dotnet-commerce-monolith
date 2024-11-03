@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Modules.Web", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Modules.Security", "src\CommerceMono.Modules.Security\CommerceMono.Modules.Security.csproj", "{48653FD3-A797-43C3-868F-F2DEA31EEB99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.IntegrationTests", "tests\CommerceMono.IntegrationTests\CommerceMono.IntegrationTests.csproj", "{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{48653FD3-A797-43C3-868F-F2DEA31EEB99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48653FD3-A797-43C3-868F-F2DEA31EEB99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48653FD3-A797-43C3-868F-F2DEA31EEB99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{32293063-F1EA-4887-A50A-88BF215A60D0} = {E831D596-11BB-4863-96E0-B4A6F5CF55D1}
 		{FE25D6EC-D2A2-4673-9B17-B536AA1C817C} = {E831D596-11BB-4863-96E0-B4A6F5CF55D1}
 		{48653FD3-A797-43C3-868F-F2DEA31EEB99} = {E831D596-11BB-4863-96E0-B4A6F5CF55D1}
+		{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8} = {27EF80D9-F0D1-47C2-BEDD-310E2A413F0C}
 	EndGlobalSection
 EndGlobal

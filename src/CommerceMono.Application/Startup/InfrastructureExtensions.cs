@@ -73,6 +73,7 @@ public static class InfrastructureExtensions
 				config.Password.RequireUppercase = false;
 			}
 		).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
 		builder.Services.AddCustomJwtTokenHandler();
 		builder.Services.AddCustomJwtAuthentication();
 
