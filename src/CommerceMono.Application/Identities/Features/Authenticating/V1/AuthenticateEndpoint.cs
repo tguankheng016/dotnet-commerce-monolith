@@ -2,8 +2,10 @@ using System.Security.Claims;
 using CommerceMono.Application.Identities.Services;
 using CommerceMono.Application.Users.Models;
 using CommerceMono.Modules.Core.Exceptions;
+using CommerceMono.Modules.Core.Validations;
 using CommerceMono.Modules.Security;
 using CommerceMono.Modules.Web;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +41,9 @@ public class AuthenticateEndpoint : IMinimalEndpoint
 		[FromBody] AuthenticateRequest request
 	)
 	{
+		var validator = new AuthenticateValidator();
+		await validator.HandleValidationAsync(request);
+
 		var identityUser = await userManager.FindByNameAsync(request.UsernameOrEmailAddress!)
 			?? await userManager.FindByEmailAsync(request.UsernameOrEmailAddress!);
 
@@ -75,6 +80,15 @@ public class AuthenticateEndpoint : IMinimalEndpoint
 			(int)TokenConsts.RefreshTokenExpiration.TotalSeconds
 		);
 		return Results.Ok(result);
+	}
+}
+
+public class AuthenticateValidator : AbstractValidator<AuthenticateRequest>
+{
+	public AuthenticateValidator()
+	{
+		RuleFor(x => x.UsernameOrEmailAddress).NotEmpty().WithMessage("Please enter the username or email address");
+		RuleFor(x => x.Password).NotEmpty().WithMessage("Please enter the password");
 	}
 }
 

@@ -48,6 +48,7 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 	[Theory]
 	[InlineData(UserConsts.DefaultUsername.Admin, "123123")]
 	[InlineData(UserConsts.DefaultUsername.User, "123123")]
+	[InlineData(null, null)]
 	public async Task Should_Not_Authenticate_With_Invalid_Credentials_Test(string username, string password)
 	{
 		// Arrange
