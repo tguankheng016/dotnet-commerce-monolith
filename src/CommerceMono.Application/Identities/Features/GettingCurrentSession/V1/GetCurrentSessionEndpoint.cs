@@ -34,7 +34,7 @@ public class GetCurrentSessionEndpoint : IMinimalEndpoint
 	{
 		var userId = appSession.UserId;
 
-		UserLoginInfoDto userDto = null;
+		UserLoginInfoDto? userDto = null;
 
 		if (userId.HasValue)
 		{
@@ -54,4 +54,4 @@ public class GetCurrentSessionEndpoint : IMinimalEndpoint
 	}
 }
 
-public record GetCurrentSessionResult(UserLoginInfoDto User, Dictionary<string, bool> AllPermissions, Dictionary<string, bool> GrantedPermissions);
+public record GetCurrentSessionResult(UserLoginInfoDto? User, Dictionary<string, bool> AllPermissions, Dictionary<string, bool> GrantedPermissions);

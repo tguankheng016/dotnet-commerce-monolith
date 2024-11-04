@@ -14,10 +14,9 @@ public static class JwtExtensions
 {
 	public static IServiceCollection AddCustomJwtTokenHandler(this IServiceCollection services)
 	{
-		// TODO: Try switch to scoped
 		services.AddSingleton<TokenAuthConfiguration>();
-		services.AddSingleton<AccessSecurityTokenHandler>();
 
+		services.AddScoped<AccessSecurityTokenHandler>();
 		services.AddScoped<ITokenKeyValidator, TokenKeyValidator>();
 		services.AddScoped<ITokenSecurityStampValidator, TokenSecurityStampValidator>();
 		//services.AddScoped<IRefreshSecurityTokenHandler, RefreshSecurityTokenHandler>();
@@ -61,11 +60,20 @@ public static class JwtExtensions
 					ClockSkew = TimeSpan.Zero
 				};
 
-				options.TokenHandlers.Clear();
-				options.TokenHandlers.Add(accessTokenValidator);
-
 				options.Events = new JwtBearerEvents
 				{
+					OnTokenValidated = async context =>
+					{
+						var customTokenHandler = context.HttpContext.RequestServices.GetRequiredService<AccessSecurityTokenHandler>();
+						var result = await customTokenHandler.ValidateTokenAsync(context.Principal!);
+
+						if (!result)
+						{
+							context.Fail("invalid token");
+						}
+
+						return;
+					},
 					OnAuthenticationFailed = context =>
 					{
 						if (context.Exception is SecurityTokenExpiredException)

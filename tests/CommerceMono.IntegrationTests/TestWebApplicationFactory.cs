@@ -1,13 +1,9 @@
 using CommerceMono.Api;
-using CommerceMono.Application.Data;
-using CommerceMono.Modules.Dapper;
 using CommerceMono.Modules.Postgres;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Testcontainers.PostgreSql;
 
 namespace CommerceMono.IntegrationTests;

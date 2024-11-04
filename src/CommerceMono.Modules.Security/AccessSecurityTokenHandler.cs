@@ -1,55 +1,44 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CommerceMono.Modules.Security;
 
-public class AccessSecurityTokenHandler : JwtSecurityTokenHandler
+public class AccessSecurityTokenHandler
 {
-    private readonly JwtSecurityTokenHandler _tokenHandler;
-    private readonly IServiceScopeFactory serviceScopeFactory;
+	private readonly ITokenSecurityStampValidator _tokenSecurityStampValidator;
+	private readonly ITokenKeyValidator _tokenKeyValidator;
 
-    public AccessSecurityTokenHandler(
-        IServiceScopeFactory serviceScopeFactory
-    )
-    {
-        this.serviceScopeFactory = serviceScopeFactory;
-        _tokenHandler = new JwtSecurityTokenHandler();
-    }
+	public AccessSecurityTokenHandler(
+		ITokenSecurityStampValidator tokenSecurityStampValidator,
+		ITokenKeyValidator tokenKeyValidator)
+	{
+		_tokenSecurityStampValidator = tokenSecurityStampValidator;
+		_tokenKeyValidator = tokenKeyValidator;
+	}
 
-    public override ClaimsPrincipal ValidateToken(string securityToken, TokenValidationParameters validationParameters,
-        out SecurityToken validatedToken)
-    {
-        var principal = _tokenHandler.ValidateToken(securityToken, validationParameters, out validatedToken);
+	public async Task<bool> ValidateTokenAsync(ClaimsPrincipal principal)
+	{
+		if (!HasTokenType(principal, AppTokenType.AccessToken))
+		{
+			throw new SecurityTokenException("invalid token type");
+		}
 
-        if (!HasTokenType(principal, AppTokenType.AccessToken))
-        {
-            throw new SecurityTokenException("invalid token type");
-        }
+		if (!await _tokenSecurityStampValidator.ValidateAsync(principal))
+		{
+			throw new SecurityTokenException("invalid");
+		}
 
-        using IServiceScope scope = serviceScopeFactory.CreateScope();
+		if (!await _tokenKeyValidator.ValidateAsync(principal))
+		{
+			throw new SecurityTokenException("invalid");
+		}
 
-        var tokenSecurityStampValidator = scope.ServiceProvider.GetRequiredService<ITokenSecurityStampValidator>();
+		return true;
+	}
 
-        if (!Task.Run(() => tokenSecurityStampValidator.ValidateAsync(principal)).GetAwaiter().GetResult())
-        {
-            throw new SecurityTokenException("invalid");
-        }
-
-        var tokenKeyValidator = scope.ServiceProvider.GetRequiredService<ITokenKeyValidator>();
-
-        if (!Task.Run(() => tokenKeyValidator.ValidateAsync(principal)).GetAwaiter().GetResult())
-        {
-            throw new SecurityTokenException("invalid");
-        }
-
-        return principal;
-    }
-
-    private bool HasTokenType(ClaimsPrincipal principal, AppTokenType tokenType)
-    {
-        return principal.Claims
-            .FirstOrDefault(x => x.Type == TokenConsts.TokenType)?.Value == ((int)tokenType).ToString();
-    }
+	private bool HasTokenType(ClaimsPrincipal principal, AppTokenType tokenType)
+	{
+		return principal.Claims
+			.FirstOrDefault(x => x.Type == TokenConsts.TokenType)?.Value == ((int)tokenType).ToString();
+	}
 }
