@@ -23,11 +23,13 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 		_dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	}
 
-	[Fact]
-	public async Task Should_Authenticate_As_Default_Admin_Test()
+	[Theory]
+	[InlineData(UserConsts.DefaultUsername.Admin, "123qwe")]
+	[InlineData(UserConsts.DefaultUsername.User, "123qwe")]
+	public async Task Should_Authenticate_As_Default_User_Test(string username, string password)
 	{
 		// Arrange
-		var request = new AuthenticateRequest(UserConsts.DefaultUsername.Admin, "123qwe");
+		var request = new AuthenticateRequest(username, password);
 
 		// Act
 		var response = await _client.PostAsJsonAsync(_endpoint, request);
@@ -43,11 +45,13 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 		authenticateResponse!.RefreshTokenExpireInSeconds.Should().Be((int)TokenConsts.RefreshTokenExpiration.TotalSeconds);
 	}
 
-	[Fact]
-	public async Task Should_Not_Authenticate_With_Invalid_Credentials_Test()
+	[Theory]
+	[InlineData(UserConsts.DefaultUsername.Admin, "123123")]
+	[InlineData(UserConsts.DefaultUsername.User, "123123")]
+	public async Task Should_Not_Authenticate_With_Invalid_Credentials_Test(string username, string password)
 	{
 		// Arrange
-		var request = new AuthenticateRequest("admin", "123123");
+		var request = new AuthenticateRequest(username, password);
 
 		// Act
 		var response = await _client.PostAsJsonAsync(_endpoint, request);

@@ -7,6 +7,7 @@
     <ProjectReference Include="..\CommerceMono.Modules.Dapper\CommerceMono.Modules.Dapper.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Caching\CommerceMono.Modules.Caching.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Security\CommerceMono.Modules.Security.csproj" />
+    <ProjectReference Include="..\CommerceMono.Logging\CommerceMono.Logging.csproj" />
   </ItemGroup>
 
   <ItemGroup>

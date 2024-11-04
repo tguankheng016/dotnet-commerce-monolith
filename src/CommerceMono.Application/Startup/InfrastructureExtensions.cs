@@ -5,6 +5,7 @@ using CommerceMono.Application.Data.Seed;
 using CommerceMono.Application.Identities.Services;
 using CommerceMono.Application.Roles.Models;
 using CommerceMono.Application.Users.Models;
+using CommerceMono.Logging;
 using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Core.Dependencies;
 using CommerceMono.Modules.Core.EfCore;
@@ -60,6 +61,8 @@ public static class InfrastructureExtensions
 
 		builder.Services.AddNpgDbContext<AppDbContext>();
 		builder.Services.AddCustomDapper();
+
+		builder.AddCustomSerilog(env);
 
 		builder.Services.AddCustomEasyCaching();
 
