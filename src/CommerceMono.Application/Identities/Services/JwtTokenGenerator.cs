@@ -95,6 +95,12 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 			TimeSpan.FromHours(1)
 		);
 
+		await _cacheProvider.SetAsync(
+			SecurityStampCacheItem.GenerateCacheKey(user.Id.ToString()),
+			user.SecurityStamp,
+			TimeSpan.FromHours(1)
+		);
+
 		await _appDbContext.UserTokens.AddAsync(new UserToken()
 		{
 			UserId = user.Id,

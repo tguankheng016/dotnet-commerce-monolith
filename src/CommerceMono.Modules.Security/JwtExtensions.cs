@@ -27,7 +27,6 @@ public static class JwtExtensions
 	public static IServiceCollection AddCustomJwtAuthentication(this IServiceCollection services)
 	{
 		var tokenAuthConfiguration = services.BuildServiceProvider().GetRequiredService<TokenAuthConfiguration>();
-		var accessTokenValidator = services.BuildServiceProvider().GetRequiredService<AccessSecurityTokenHandler>();
 
 		services.AddAuthentication(
 			options =>

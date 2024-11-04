@@ -3,7 +3,9 @@ using System.Net.Http.Json;
 using CommerceMono.Application.Data;
 using CommerceMono.Application.Identities.Features.Authenticating.V1;
 using CommerceMono.Application.Users.Constants;
+using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Security;
+using EasyCaching.Core;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,7 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 {
 	private readonly HttpClient _client;
 	private readonly AppDbContext _dbContext;
+	private readonly IEasyCachingProvider _cacheProvider;
 	private readonly string _endpoint = "api/v2/identities/authenticate";
 
 	public Authenticate_Tests(TestWebApplicationFactory apiFactory)
@@ -20,6 +23,7 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 		_client = apiFactory.CreateClient();
 		var _scope = apiFactory.Services.CreateScope();
 		_dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
+		_cacheProvider = _scope.ServiceProvider.GetRequiredService<ICacheManager>().GetCachingProvider();
 	}
 
 	[Theory]
@@ -42,6 +46,15 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 		authenticateResponse!.ExpireInSeconds.Should().Be((int)TokenConsts.AccessTokenExpiration.TotalSeconds);
 		authenticateResponse!.RefreshToken.Should().NotBeNullOrEmpty();
 		authenticateResponse!.RefreshTokenExpireInSeconds.Should().Be((int)TokenConsts.RefreshTokenExpiration.TotalSeconds);
+
+		var tokenKeyCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}");
+		tokenKeyCaches.Should().NotBeNull();
+		// Access and Refresh
+		tokenKeyCaches!.Count().Should().Be(2);
+
+		var securityStampCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.SecurityStampKey}");
+		securityStampCaches.Should().NotBeNull();
+		securityStampCaches!.Count().Should().Be(1);
 	}
 
 	[Theory]
