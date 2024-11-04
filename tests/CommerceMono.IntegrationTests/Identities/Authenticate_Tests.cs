@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Http.Json;
 using CommerceMono.Application.Data;
@@ -14,7 +13,7 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 {
 	private readonly HttpClient _client;
 	private readonly AppDbContext _dbContext;
-	private readonly string _endpoint = "api/identities/authenticate";
+	private readonly string _endpoint = "api/v2/identities/authenticate";
 
 	public Authenticate_Tests(TestWebApplicationFactory apiFactory)
 	{

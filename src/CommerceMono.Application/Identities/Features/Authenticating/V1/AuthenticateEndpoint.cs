@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Asp.Versioning.Conventions;
 using CommerceMono.Application.Identities.Services;
 using CommerceMono.Application.Users.Models;
 using CommerceMono.Modules.Core.Exceptions;
@@ -18,16 +19,15 @@ public class AuthenticateEndpoint : IMinimalEndpoint
 {
 	public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
 	{
-		// TODO: Add Api Version
-		builder.MapPost($"api/identities/authenticate", Handle)
+		builder.MapPost($"{EndpointConfig.BaseApiPath}/identities/authenticate", Handle)
 			.WithName("Authenticate")
-			//.WithApiVersionSet(builder.NewApiVersionSet("Identities").Build())
+			.WithApiVersionSet(builder.GetApiVersionSet())
 			.Produces<AuthenticateResult>()
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.WithSummary("Authenticate")
-			.WithDescription("Authenticate");
-		//.WithOpenApi()
-		//.HasApiVersion(1.0);
+			.WithDescription("Authenticate")
+			.WithOpenApi()
+			.HasApiVersion(1.0);
 
 		return builder;
 	}

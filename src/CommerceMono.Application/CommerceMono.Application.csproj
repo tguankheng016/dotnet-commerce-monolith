@@ -20,10 +20,6 @@
     <Folder Include="Users/Services/" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Scalar.AspNetCore" Version="1.2.29" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

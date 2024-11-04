@@ -2,6 +2,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommerceMono.Modules.Core\CommerceMono.Modules.Core.csproj" />
+    <ProjectReference Include="..\CommerceMono.Modules.Security\CommerceMono.Modules.Security.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
   </ItemGroup>
 
   <PropertyGroup>

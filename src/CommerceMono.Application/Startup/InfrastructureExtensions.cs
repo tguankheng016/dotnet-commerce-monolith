@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Scalar.AspNetCore;
 
 namespace CommerceMono.Application.Startup;
 
@@ -66,6 +65,9 @@ public static class InfrastructureExtensions
 
 		builder.Services.AddCustomEasyCaching();
 
+		builder.Services.AddCustomSwagger(configuration);
+		builder.Services.AddCustomVersioning();
+
 		builder.Services.AddProblemDetails();
 
 		builder.Services.AddIdentity<User, Role>(config =>
@@ -105,15 +107,10 @@ public static class InfrastructureExtensions
 
 		app.UseAuthorization();
 
-		// TODO: Wait Scalar To Fix Empty Body Issue
-		app.UseSwagger(options =>
-		{
-			options.RouteTemplate = "/openapi/{documentName}.json";
-		});
-
-		app.MapScalarApiReference();
-
+		// Must come before custom swagger for versions to be visible in ui
 		app.MapMinimalEndpoints();
+
+		app.UseCustomSwagger();
 
 		return app;
 	}
