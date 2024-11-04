@@ -12,12 +12,15 @@
 
   <ItemGroup>
     <Folder Include="Data/Migrations/" />
-    <Folder Include="Identities/Dtos/" />
     <Folder Include="Roles/Dtos/" />
     <Folder Include="Roles/Features/" />
     <Folder Include="Users/Dtos/" />
     <Folder Include="Users/Features/" />
     <Folder Include="Users/Services/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Riok.Mapperly" Version="4.1.0" />
   </ItemGroup>
 
   <PropertyGroup>

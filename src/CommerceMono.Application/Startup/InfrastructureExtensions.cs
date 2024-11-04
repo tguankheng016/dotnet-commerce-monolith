@@ -11,6 +11,7 @@ using CommerceMono.Modules.Core.Dependencies;
 using CommerceMono.Modules.Core.EfCore;
 using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Core.Persistences;
+using CommerceMono.Modules.Core.Sessions;
 using CommerceMono.Modules.Dapper;
 using CommerceMono.Modules.Postgres;
 using CommerceMono.Modules.Security;
@@ -33,6 +34,7 @@ public static class InfrastructureExtensions
 
 		builder.Services.AddDefaultDependencyInjection(assembly);
 
+		builder.Services.AddScoped<IAppSession, AppSession>();
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 		builder.Services.AddScoped<ITokenKeyDbValidator, TokenKeyDbValidator>();
 		builder.Services.AddScoped<ITokenSecurityStampDbValidator, TokenSecurityStampDbValidator>();

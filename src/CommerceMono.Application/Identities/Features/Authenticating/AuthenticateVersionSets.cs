@@ -8,7 +8,6 @@ namespace CommerceMono.Application.Identities.Features.Authenticating;
 
 public static class AuthenticateVersionSets
 {
-
 	public static ApiVersionSet GetApiVersionSet(this IEndpointRouteBuilder builder)
 	{
 		return builder.NewApiVersionSet("Authenticate")
