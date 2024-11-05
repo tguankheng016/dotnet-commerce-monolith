@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using CommerceMono.Application.Identities.Features.GettingCurrentSession.V1;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.IntegrationTests.Utilities;
+using CommerceMono.Modules.Permissions;
 using FluentAssertions;
 
 namespace CommerceMono.IntegrationTests.Identities;
@@ -53,6 +54,15 @@ public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
 		{
 			currentSession!.User.Should().NotBeNull();
 			currentSession!.User!.UserName.Should().Be(username);
+
+			var allPermissions = AppPermissionProvider.GetPermissions();
+
+			currentSession.AllPermissions.Count().Should().Be(allPermissions.Count());
+
+			if (currentSession.User.UserName == UserConsts.DefaultUsername.Admin)
+			{
+				currentSession.GrantedPermissions.Count().Should().Be(allPermissions.Count());
+			}
 		}
 	}
 }

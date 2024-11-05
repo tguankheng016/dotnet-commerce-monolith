@@ -2,6 +2,7 @@ using CommerceMono.Application.Identities.Dtos;
 using CommerceMono.Application.Users.Models;
 using CommerceMono.Modules.Core.CQRS;
 using CommerceMono.Modules.Core.Sessions;
+using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Web;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -50,7 +51,9 @@ public record GetCurrentSessionQuery() : IQuery<GetCurrentSessionResult>
 // Handler
 internal class GetCurrentSessionHandler(
 	UserManager<User> userManager,
-	IAppSession appSession
+	IAppSession appSession,
+	AppPermissions appPermissions,
+	IPermissionManager permissionManager
 ) : IQueryHandler<GetCurrentSessionQuery, GetCurrentSessionResult>
 {
 	public async Task<GetCurrentSessionResult> Handle(GetCurrentSessionQuery request, CancellationToken cancellationToken)
@@ -58,6 +61,9 @@ internal class GetCurrentSessionHandler(
 		var userId = appSession.UserId;
 
 		UserLoginInfoDto? userDto = null;
+
+		var allPermissions = appPermissions.Items.ToDictionary(p => p.Name, p => true);
+		var grantedPermissions = new Dictionary<string, bool>();
 
 		if (userId.HasValue)
 		{
@@ -67,10 +73,11 @@ internal class GetCurrentSessionHandler(
 			{
 				var mapper = new IdentityMapper();
 				userDto = mapper.UserToUserLoginInfoDto(user);
-
+				grantedPermissions = (await permissionManager.GetGrantedPermissionsAsync(user.Id, cancellationToken))
+					.ToDictionary(x => x.Key, x => true);
 			}
 		}
 
-		return new GetCurrentSessionResult(userDto, new Dictionary<string, bool>(), new Dictionary<string, bool>());
+		return new GetCurrentSessionResult(userDto, allPermissions, grantedPermissions);
 	}
 }
