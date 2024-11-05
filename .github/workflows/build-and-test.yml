@@ -1,0 +1,34 @@
+name: "Build And Run Unit Test"
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    paths:
+      - "src/**"
+      - "tests/**"
+  workflow_dispatch:
+
+jobs:
+  build-and-test-backend:
+    name: Build And Test Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore, Build And Run Unit Tests
+        run: |
+          cd ./tests/CommerceMono.UnitTests
+          dotnet restore
+          dotnet build
+          dotnet test --no-build --verbosity normal
+      - name: Restore, Build And Run Integration Tests
+        run: |
+          cd ./tests/CommerceMono.IntegrationTests
+          dotnet restore
+          dotnet build
+          dotnet test --no-build --verbosity normal
