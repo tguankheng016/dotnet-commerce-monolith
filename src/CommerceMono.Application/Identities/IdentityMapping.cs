@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using CommerceMono.Application.Identities.Dtos;
+using CommerceMono.Application.Identities.Features.Authenticating.V2;
 using CommerceMono.Application.Users.Models;
 using Riok.Mapperly.Abstractions;
 
@@ -7,7 +9,8 @@ namespace CommerceMono.Application.Identities;
 [Mapper]
 public partial class IdentityMapper
 {
-#pragma warning disable RMG020 // Source member is not mapped to any target member
-    public partial UserLoginInfoDto UserToUserLoginInfoDto(User user);
-#pragma warning restore RMG020 // Source member is not mapped to any target member
+	[SuppressMessage("Mapper", "RMG020")]
+	public partial UserLoginInfoDto UserToUserLoginInfoDto(User user);
+
+	public partial AuthenticateCommand AuthenticateRequestToAuthenticateCommand(AuthenticateRequest request);
 }

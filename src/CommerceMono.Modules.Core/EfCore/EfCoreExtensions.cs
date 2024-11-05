@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CommerceMono.Modules.Core.EfCore;
+namespace CommerceMono.Modules.Core.EFCore;
 
-public static class EfCoreExtensions
+public static class EFCoreExtensions
 {
 	public static void ToSnakeCaseTableNames(this ModelBuilder modelBuilder)
 	{

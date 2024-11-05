@@ -8,7 +8,7 @@ using CommerceMono.Application.Users.Models;
 using CommerceMono.Logging;
 using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Core.Dependencies;
-using CommerceMono.Modules.Core.EfCore;
+using CommerceMono.Modules.Core.EFCore;
 using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Core.Persistences;
 using CommerceMono.Modules.Core.Sessions;
@@ -16,11 +16,13 @@ using CommerceMono.Modules.Dapper;
 using CommerceMono.Modules.Postgres;
 using CommerceMono.Modules.Security;
 using CommerceMono.Modules.Web;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace CommerceMono.Application.Startup;
 
@@ -70,6 +72,10 @@ public static class InfrastructureExtensions
 		builder.Services.AddCustomSwagger(configuration);
 		builder.Services.AddCustomVersioning();
 
+		builder.Services.AddCustomMediatR();
+
+		builder.Services.AddValidatorsFromAssembly(assembly);
+
 		builder.Services.AddProblemDetails();
 
 		builder.Services.AddIdentity<User, Role>(config =>
@@ -98,6 +104,11 @@ public static class InfrastructureExtensions
 		app.UseForwardedHeaders();
 
 		app.UseCustomProblemDetails();
+
+		app.UseSerilogRequestLogging(options =>
+		{
+			options.EnrichDiagnosticContext = LogEnrichHelper.EnrichFromRequest;
+		});
 
 		app.UseMigration<AppDbContext>();
 

@@ -3,7 +3,7 @@ using System.Reflection;
 using CommerceMono.Application.Roles.Models;
 using CommerceMono.Application.Users.Models;
 using CommerceMono.Modules.Core.Domain;
-using CommerceMono.Modules.Core.EfCore;
+using CommerceMono.Modules.Core.EFCore;
 using CommerceMono.Modules.Core.Persistences;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

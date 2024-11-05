@@ -17,4 +17,8 @@
     <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.SpectreConsole" Version="0.3.3" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommerceMono.Modules.Core\CommerceMono.Modules.Core.csproj" />
+  </ItemGroup>
 </Project>

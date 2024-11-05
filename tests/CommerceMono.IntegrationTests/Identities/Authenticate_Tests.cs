@@ -7,6 +7,7 @@ using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Security;
 using EasyCaching.Core;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CommerceMono.IntegrationTests.Identities;
@@ -33,6 +34,7 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 	{
 		// Arrange
 		var request = new AuthenticateRequest(username, password);
+		var user = await _dbContext.Users.FirstAsync(x => x.NormalizedUserName == username.ToUpper());
 
 		// Act
 		var response = await _client.PostAsJsonAsync(_endpoint, request);
@@ -47,12 +49,12 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 		authenticateResponse!.RefreshToken.Should().NotBeNullOrEmpty();
 		authenticateResponse!.RefreshTokenExpireInSeconds.Should().Be((int)TokenConsts.RefreshTokenExpiration.TotalSeconds);
 
-		var tokenKeyCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}");
+		var tokenKeyCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}.{user.Id}");
 		tokenKeyCaches.Should().NotBeNull();
 		// Access and Refresh
 		tokenKeyCaches!.Count().Should().Be(2);
 
-		var securityStampCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.SecurityStampKey}");
+		var securityStampCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.SecurityStampKey}.{user.Id}");
 		securityStampCaches.Should().NotBeNull();
 		securityStampCaches!.Count().Should().Be(1);
 	}
