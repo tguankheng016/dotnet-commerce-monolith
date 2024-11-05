@@ -26,7 +26,8 @@ public class SignOutEndpoint : IMinimalEndpoint
 			.WithSummary("SignOut")
 			.WithDescription("SignOut")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasApiVersion(1.0)
+			.HasApiVersion(2.0);
 
 		return builder;
 	}

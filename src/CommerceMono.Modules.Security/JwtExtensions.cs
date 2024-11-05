@@ -19,7 +19,7 @@ public static class JwtExtensions
 		services.AddScoped<AccessSecurityTokenHandler>();
 		services.AddScoped<ITokenKeyValidator, TokenKeyValidator>();
 		services.AddScoped<ITokenSecurityStampValidator, TokenSecurityStampValidator>();
-		//services.AddScoped<IRefreshSecurityTokenHandler, RefreshSecurityTokenHandler>();
+		services.AddScoped<IRefreshSecurityTokenHandler, RefreshSecurityTokenHandler>();
 
 		return services;
 	}
