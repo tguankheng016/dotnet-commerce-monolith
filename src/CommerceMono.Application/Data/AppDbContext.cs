@@ -23,6 +23,8 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 		_logger = logger;
 	}
 
+	public DbSet<UserRolePermission> UserRolePermissions => Set<UserRolePermission>();
+
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

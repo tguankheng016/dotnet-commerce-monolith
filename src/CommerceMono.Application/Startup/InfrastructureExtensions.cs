@@ -13,6 +13,7 @@ using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Core.Persistences;
 using CommerceMono.Modules.Core.Sessions;
 using CommerceMono.Modules.Dapper;
+using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Postgres;
 using CommerceMono.Modules.Security;
 using CommerceMono.Modules.Web;
@@ -40,6 +41,7 @@ public static class InfrastructureExtensions
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 		builder.Services.AddScoped<ITokenKeyDbValidator, TokenKeyDbValidator>();
 		builder.Services.AddScoped<ITokenSecurityStampDbValidator, TokenSecurityStampDbValidator>();
+		builder.Services.AddScoped<IPermissionDbManager, PermissionDbManager>();
 
 		builder.Services.AddRateLimiter(options =>
 		{
@@ -90,6 +92,8 @@ public static class InfrastructureExtensions
 		builder.Services.AddCustomJwtTokenHandler();
 		builder.Services.AddCustomJwtAuthentication();
 
+		builder.Services.AddPermissionAuthorization();
+
 		builder.Services.Configure<ForwardedHeadersOptions>(options =>
 		{
 			options.ForwardedHeaders =
@@ -117,6 +121,8 @@ public static class InfrastructureExtensions
 		app.UseAuthentication();
 
 		app.UseJwtTokenMiddleware();
+
+		app.UsePermissionMiddleware();
 
 		app.UseAuthorization();
 

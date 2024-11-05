@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.IntegrationTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Logging", "src\CommerceMono.Logging\CommerceMono.Logging.csproj", "{6BBDE57B-590F-42A3-9773-CE289C17A7F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Modules.Permissions", "src\CommerceMono.Modules.Permissions\CommerceMono.Modules.Permissions.csproj", "{FA357792-31EC-4EC0-AFAA-9B8EAD708A30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{6BBDE57B-590F-42A3-9773-CE289C17A7F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BBDE57B-590F-42A3-9773-CE289C17A7F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BBDE57B-590F-42A3-9773-CE289C17A7F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA357792-31EC-4EC0-AFAA-9B8EAD708A30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA357792-31EC-4EC0-AFAA-9B8EAD708A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA357792-31EC-4EC0-AFAA-9B8EAD708A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA357792-31EC-4EC0-AFAA-9B8EAD708A30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +94,6 @@ Global
 		{48653FD3-A797-43C3-868F-F2DEA31EEB99} = {E831D596-11BB-4863-96E0-B4A6F5CF55D1}
 		{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8} = {27EF80D9-F0D1-47C2-BEDD-310E2A413F0C}
 		{6BBDE57B-590F-42A3-9773-CE289C17A7F9} = {E831D596-11BB-4863-96E0-B4A6F5CF55D1}
+		{FA357792-31EC-4EC0-AFAA-9B8EAD708A30} = {E831D596-11BB-4863-96E0-B4A6F5CF55D1}
 	EndGlobalSection
 EndGlobal

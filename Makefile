@@ -1,5 +1,5 @@
 # Add Migrations
-MIGRATION_NAME = Initial
+MIGRATION_NAME = Added_UserRolePermissions
 MIGRATION_PROJECT = src/CommerceMono.Application/CommerceMono.Application.csproj
 STARTUP_PROJECT = src/CommerceMono.Api/CommerceMono.Api.csproj
 DBCONTEXT_WITH_NAMESPACE = CommerceMono.Application.Data.AppDbContext
