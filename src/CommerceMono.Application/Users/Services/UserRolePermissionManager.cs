@@ -180,6 +180,11 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 			return grantedPermissions;
 		}
 	}
+
+	public async Task RemoveUserRoleCacheAsync(long userId, CancellationToken cancellationToken = default)
+	{
+		await _cacheProvider.RemoveAsync(UserRoleCacheItem.GenerateCacheKey(userId), cancellationToken);
+	}
 }
 
 
@@ -190,4 +195,6 @@ public interface IUserRolePermissionManager : IScopedDependency
 	Task<Dictionary<string, string>> SetUserPermissionAsync(long userId, CancellationToken cancellationToken = default);
 
 	Task<Dictionary<string, string>> SetRolePermissionAsync(long role, CancellationToken cancellationToken = default);
+
+	Task RemoveUserRoleCacheAsync(long userId, CancellationToken cancellationToken = default);
 }
