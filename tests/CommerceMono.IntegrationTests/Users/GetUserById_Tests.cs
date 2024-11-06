@@ -1,16 +1,16 @@
-using CommerceMono.Application.Roles.Constants;
-using CommerceMono.Application.Roles.Features.GettingRoleById.V1;
+using CommerceMono.Application.Users.Constants;
+using CommerceMono.Application.Users.Features.GettingUserById.V1;
 using CommerceMono.IntegrationTests.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
-namespace CommerceMono.IntegrationTests.Roles;
+namespace CommerceMono.IntegrationTests.Users;
 
-public class GetRoleByIdTestBase : AppTestBase
+public class GetUserByIdTestBase : AppTestBase
 {
-	protected override string EndpointName { get; } = "role";
+	protected override string EndpointName { get; } = "user";
 
-	protected GetRoleByIdTestBase(
+	protected GetUserByIdTestBase(
 		ITestOutputHelper testOutputHelper,
 		TestContainers testContainers
 	) : base(testOutputHelper, testContainers)
@@ -18,9 +18,9 @@ public class GetRoleByIdTestBase : AppTestBase
 	}
 }
 
-public class GetRoleById_Tests : GetRoleByIdTestBase
+public class GetUserById_Tests : GetUserByIdTestBase
 {
-	public GetRoleById_Tests(
+	public GetUserById_Tests(
 		ITestOutputHelper testOutputHelper,
 		TestContainers testContainers
 	) : base(testOutputHelper, testContainers)
@@ -28,28 +28,28 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 	}
 
 	[Theory]
-	[InlineData(1, RoleConsts.RoleName.Admin)]
-	[InlineData(0, "")]
-	public async Task Should_Get_Role_By_Id_Test(long roleId, string roleName)
+	[InlineData(1, UserConsts.DefaultUsername.Admin)]
+	[InlineData(0, null)]
+	public async Task Should_Get_User_By_Id_Test(long userId, string userName)
 	{
 		// Arrange
 		HttpClient? client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
-		var response = await client.GetAsync($"{Endpoint}/{roleId}");
+		var response = await client.GetAsync($"{Endpoint}/{userId}");
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-		var roleResult = await response.Content.ReadFromJsonAsync<GetRoleByIdResult>();
-		roleResult.Should().NotBeNull();
-		roleResult!.Role.Should().NotBeNull();
-		roleResult.Role.Id.Should().Be(roleId == 0 ? null : roleId);
-		roleResult.Role.Name.Should().Be(roleName);
+		var userResult = await response.Content.ReadFromJsonAsync<GetUserByIdResult>();
+		userResult.Should().NotBeNull();
+		userResult!.User.Should().NotBeNull();
+		userResult.User.Id.Should().Be(userId == 0 ? null : userId);
+		userResult.User.UserName.Should().Be(userName);
 	}
 
 	[Fact]
-	public async Task Should_Get_Role_NotFound_By_Invalid_Id_Test()
+	public async Task Should_Get_User_NotFound_By_Invalid_Id_Test()
 	{
 		// Arrange
 		HttpClient? client = await ApiFactory.LoginAsAdmin();
@@ -62,9 +62,9 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 	}
 }
 
-public class GetRoleByIdUnauthorized_Tests : GetRoleByIdTestBase
+public class GetUserByIdUnauthorized_Tests : GetUserByIdTestBase
 {
-	public GetRoleByIdUnauthorized_Tests(
+	public GetUserByIdUnauthorized_Tests(
 		ITestOutputHelper testOutputHelper,
 		TestContainers testContainers
 	) : base(testOutputHelper, testContainers)
@@ -72,7 +72,7 @@ public class GetRoleByIdUnauthorized_Tests : GetRoleByIdTestBase
 	}
 
 	[Fact]
-	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
+	public async Task Should_Create_User_With_Unauthorized_Error_Test()
 	{
 		// Arrange
 		HttpClient? client = await ApiFactory.LoginAsUser();

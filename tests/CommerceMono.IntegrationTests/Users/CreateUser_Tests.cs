@@ -5,6 +5,7 @@ using CommerceMono.Application.Users.Models;
 using CommerceMono.IntegrationTests.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 using static Bogus.DataSets.Name;
 
 namespace CommerceMono.IntegrationTests.Users;
@@ -13,14 +14,20 @@ public class CreateUserTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "user";
 
-	protected CreateUserTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	protected CreateUserTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 }
 
 public class CreateUser_Tests : CreateUserTestBase
 {
-	public CreateUser_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public CreateUser_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -50,6 +57,10 @@ public class CreateUser_Tests : CreateUserTestBase
 		createResult.Should().NotBeNull();
 		createResult!.User.Should().NotBeNull();
 		createResult!.User.Id.Should().BeGreaterThan(0);
+		createResult!.User.UserName.Should().Be(request.UserName);
+		createResult!.User.FirstName.Should().Be(request.FirstName);
+		createResult!.User.LastName.Should().Be(request.LastName);
+		createResult!.User.Email.Should().Be(request.Email);
 
 		var newTotalCount = await DbContext.Users.CountAsync();
 		newTotalCount.Should().Be(totalCount + 1);
@@ -58,7 +69,10 @@ public class CreateUser_Tests : CreateUserTestBase
 
 public class CreateUserValidation_Tests : CreateUserTestBase
 {
-	public CreateUserValidation_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public CreateUserValidation_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -165,7 +179,10 @@ public class CreateUserValidation_Tests : CreateUserTestBase
 
 public class CreateUserUnauthorized_Tests : CreateUserTestBase
 {
-	public CreateUserUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public CreateUserUnauthorized_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

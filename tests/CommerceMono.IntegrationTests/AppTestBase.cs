@@ -2,10 +2,11 @@ using CommerceMono.Application.Data;
 using CommerceMono.Modules.Caching;
 using EasyCaching.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests;
 
-public class AppTestBase : IClassFixture<TestWebApplicationFactory>
+public class AppTestBase : IClassFixture<TestContainers>
 {
 	protected readonly TestWebApplicationFactory ApiFactory;
 	protected readonly AppDbContext DbContext;
@@ -22,11 +23,14 @@ public class AppTestBase : IClassFixture<TestWebApplicationFactory>
 		}
 	}
 
-	public AppTestBase(TestWebApplicationFactory apiFactory)
+	public AppTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	)
 	{
-		ApiFactory = apiFactory;
-		Client = apiFactory.CreateClient();
-		var _scope = apiFactory.Services.CreateScope();
+		ApiFactory = new TestWebApplicationFactory(testOutputHelper, testContainers);
+		Client = ApiFactory.CreateClient();
+		var _scope = ApiFactory.Services.CreateScope();
 		DbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
 		CacheProvider = _scope.ServiceProvider.GetRequiredService<ICacheManager>().GetCachingProvider();
 	}

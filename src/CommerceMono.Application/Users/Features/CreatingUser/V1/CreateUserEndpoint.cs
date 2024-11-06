@@ -102,7 +102,7 @@ internal class CreateUserHandler(
 			throw new BadRequestException(string.Join(',', identityResult.Errors.Select(e => e.Description)));
 		}
 
-		if (command.Roles == null || command.Roles.Count == 0)
+		if (command.Roles is null || command.Roles.Count == 0)
 		{
 			var defaultRole = await roleManager.Roles
 				.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);

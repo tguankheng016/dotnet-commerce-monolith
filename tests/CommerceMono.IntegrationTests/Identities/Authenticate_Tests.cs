@@ -3,6 +3,7 @@ using CommerceMono.Application.Users.Constants;
 using CommerceMono.Modules.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
@@ -11,7 +12,10 @@ public class Authenticate_Tests : AppTestBase
 	protected override string EndpointVersion { get; } = "v2";
 	protected override string EndpointName { get; } = "identities/authenticate";
 
-	public Authenticate_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public Authenticate_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

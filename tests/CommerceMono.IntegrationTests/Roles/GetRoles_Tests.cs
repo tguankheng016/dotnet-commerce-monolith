@@ -6,6 +6,7 @@ using CommerceMono.Modules.Core.Pagination;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
@@ -13,14 +14,20 @@ public class GetRolesTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "roles";
 
-	protected GetRolesTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	protected GetRolesTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 }
 
 public class GetRoles_Tests : GetRolesTestBase
 {
-	public GetRoles_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public GetRoles_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -47,7 +54,10 @@ public class GetRoles_Tests : GetRolesTestBase
 
 public class GetRolesFiltered_Tests : GetRolesTestBase
 {
-	public GetRolesFiltered_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public GetRolesFiltered_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -75,7 +85,10 @@ public class GetRolesFiltered_Tests : GetRolesTestBase
 
 public class GetRolesPaginated_Tests : GetRolesTestBase
 {
-	public GetRolesPaginated_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public GetRolesPaginated_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -105,7 +118,10 @@ public class GetRolesPaginated_Tests : GetRolesTestBase
 
 public class GetRolesUnauthorized_Tests : GetRolesTestBase
 {
-	public GetRolesUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public GetRolesUnauthorized_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

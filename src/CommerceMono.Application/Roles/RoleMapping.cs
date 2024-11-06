@@ -19,5 +19,5 @@ public partial class RoleMapper
 
 	public partial CreateRoleCommand CreateRoleDtoToCreateRoleCommand(CreateRoleDto createRoleDto);
 
-	public partial UpdateRoleCommand EditRoleDtoToUpdateRoleCommand(EditRoleDto createRoleDto);
+	public partial UpdateRoleCommand EditRoleDtoToUpdateRoleCommand(EditRoleDto editRoleDto);
 }

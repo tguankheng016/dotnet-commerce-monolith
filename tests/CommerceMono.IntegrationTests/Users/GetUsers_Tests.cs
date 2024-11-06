@@ -6,124 +6,140 @@ using CommerceMono.Modules.Core.Pagination;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Users;
 
 public class GetUsersTestBase : AppTestBase
 {
-    protected override string EndpointName { get; } = "users";
+	protected override string EndpointName { get; } = "users";
 
-    protected GetUsersTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
-    {
-    }
+	protected GetUsersTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
+	{
+	}
 }
 
 public class GetUsers_Tests : GetUsersTestBase
 {
-    public GetUsers_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
-    {
-    }
+	public GetUsers_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
+	{
+	}
 
-    [Fact]
-    public async Task Should_Get_Users_Test()
-    {
-        // Arrange
-        HttpClient? client = await ApiFactory.LoginAsAdmin();
-        var totalCount = await DbContext.Users.CountAsync();
+	[Fact]
+	public async Task Should_Get_Users_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var totalCount = await DbContext.Users.CountAsync();
 
-        // Act
-        var response = await client.GetAsync(Endpoint);
+		// Act
+		var response = await client.GetAsync(Endpoint);
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var userResults = await response.Content.ReadFromJsonAsync<GetUsersResult>();
+		var userResults = await response.Content.ReadFromJsonAsync<GetUsersResult>();
 
-        userResults.Should().NotBeNull();
-        userResults!.TotalCount.Should().Be(totalCount);
-        userResults!.Items!.Count().Should().Be(totalCount);
-    }
+		userResults.Should().NotBeNull();
+		userResults!.TotalCount.Should().Be(totalCount);
+		userResults!.Items!.Count().Should().Be(totalCount);
+	}
 }
 
 public class GetUsersFiltered_Tests : GetUsersTestBase
 {
-    public GetUsersFiltered_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
-    {
-    }
+	public GetUsersFiltered_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
+	{
+	}
 
-    [Fact]
-    public async Task Should_Get_Users_Filtered_Test()
-    {
-        // Arrange
-        HttpClient? client = await ApiFactory.LoginAsAdmin();
-        var filterText = UserConsts.DefaultUsername.Admin.Substring(0, 3);
+	[Fact]
+	public async Task Should_Get_Users_Filtered_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var filterText = UserConsts.DefaultUsername.Admin.Substring(0, 3);
 
-        // Act
-        var response = await client.GetAsync($"{Endpoint}?{nameof(PageRequest.Filters).Camelize()}={filterText}");
+		// Act
+		var response = await client.GetAsync($"{Endpoint}?{nameof(PageRequest.Filters).Camelize()}={filterText}");
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var userResults = await response.Content.ReadFromJsonAsync<GetUsersResult>();
+		var userResults = await response.Content.ReadFromJsonAsync<GetUsersResult>();
 
-        userResults.Should().NotBeNull();
-        userResults!.TotalCount.Should().Be(1);
-        userResults!.Items!.Count().Should().Be(1);
-        userResults!.Items[0]!.UserName.Should().Be(UserConsts.DefaultUsername.Admin);
-    }
+		userResults.Should().NotBeNull();
+		userResults!.TotalCount.Should().Be(1);
+		userResults!.Items!.Count().Should().Be(1);
+		userResults!.Items[0]!.UserName.Should().Be(UserConsts.DefaultUsername.Admin);
+	}
 }
 
 public class GetUsersPaginated_Tests : GetUsersTestBase
 {
-    public GetUsersPaginated_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
-    {
-    }
+	public GetUsersPaginated_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
+	{
+	}
 
-    [Fact]
-    public async Task Should_Get_Users_Paginated_Test()
-    {
-        // Arrange
-        HttpClient? client = await ApiFactory.LoginAsAdmin();
-        var totalCount = await DbContext.Users.CountAsync();
-        var sorting = nameof(User.UserName).Camelize() + " desc";
-        var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
+	[Fact]
+	public async Task Should_Get_Users_Paginated_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var totalCount = await DbContext.Users.CountAsync();
+		var sorting = nameof(User.UserName).Camelize() + " desc";
+		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
 
-        // Act
-        var response = await client.GetAsync(requestUri);
+		// Act
+		var response = await client.GetAsync(requestUri);
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var userResults = await response.Content.ReadFromJsonAsync<GetUsersResult>();
+		var userResults = await response.Content.ReadFromJsonAsync<GetUsersResult>();
 
-        userResults.Should().NotBeNull();
-        userResults!.TotalCount.Should().Be(totalCount);
-        userResults!.Items!.Count().Should().Be(1);
-        userResults!.Items[0]!.UserName.Should().NotBe(UserConsts.DefaultUsername.Admin);
-    }
+		userResults.Should().NotBeNull();
+		userResults!.TotalCount.Should().Be(totalCount);
+		userResults!.Items!.Count().Should().Be(1);
+		userResults!.Items[0]!.UserName.Should().NotBe(UserConsts.DefaultUsername.Admin);
+	}
 }
 
 public class GetUsersUnauthorized_Tests : GetUsersTestBase
 {
-    public GetUsersUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
-    {
-    }
+	public GetUsersUnauthorized_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
+	{
+	}
 
-    [Fact]
-    public async Task Should_Get_Users_Unauthorized_Error_Test()
-    {
-        // Arrange
-        HttpClient? client = await ApiFactory.LoginAsUser();
-        var sorting = nameof(User.UserName).Camelize() + " desc";
-        var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
+	[Fact]
+	public async Task Should_Get_Users_Unauthorized_Error_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsUser();
+		var sorting = nameof(User.UserName).Camelize() + " desc";
+		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
 
-        // Act
-        var response = await client.GetAsync(requestUri);
+		// Act
+		var response = await client.GetAsync(requestUri);
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
-        var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-        failureResponse.Should().NotBeNull();
-    }
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+	}
 }

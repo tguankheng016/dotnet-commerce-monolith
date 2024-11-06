@@ -4,6 +4,7 @@ using CommerceMono.Application.Users.Constants;
 using CommerceMono.Modules.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
@@ -11,7 +12,10 @@ public class RefreshToken_Tests : AppTestBase
 {
 	protected override string EndpointName { get; } = "identities/refresh-token";
 
-	public RefreshToken_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public RefreshToken_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

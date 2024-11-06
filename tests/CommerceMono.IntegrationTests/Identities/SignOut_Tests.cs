@@ -2,6 +2,7 @@ using CommerceMono.Application.Identities.Features.Authenticating.V2;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.Modules.Security;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
@@ -9,7 +10,10 @@ public class SignOut_Tests : AppTestBase
 {
 	protected override string EndpointName { get; } = "identities/sign-out";
 
-	public SignOut_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public SignOut_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

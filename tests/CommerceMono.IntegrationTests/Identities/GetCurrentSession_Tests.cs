@@ -1,19 +1,20 @@
-
 using CommerceMono.Application.Identities.Features.GettingCurrentSession.V1;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.IntegrationTests.Utilities;
 using CommerceMono.Modules.Permissions;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
 public class GetCurrentSession_Tests : AppTestBase
 {
-	private readonly TestWebApplicationFactory _apiFactory;
 	protected override string EndpointName { get; } = "identities/current-session";
 
-	public GetCurrentSession_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public GetCurrentSession_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
-		_apiFactory = apiFactory;
 	}
 
 	[Theory]
@@ -27,7 +28,7 @@ public class GetCurrentSession_Tests : AppTestBase
 
 		if (username is not null)
 		{
-			client = await _apiFactory.LoginAs(username);
+			client = await ApiFactory.LoginAs(username);
 		}
 		else
 		{

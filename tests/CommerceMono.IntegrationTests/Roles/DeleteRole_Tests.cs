@@ -2,6 +2,7 @@ using CommerceMono.Application.Roles.Models;
 using CommerceMono.IntegrationTests.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
@@ -9,14 +10,20 @@ public class DeleteRoleTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
-	protected DeleteRoleTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	protected DeleteRoleTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 }
 
 public class DeleteRole_Tests : DeleteRoleTestBase
 {
-	public DeleteRole_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public DeleteRole_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -84,7 +91,10 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 
 public class DeleteRoleUnauthorized_Tests : CreateRoleTestBase
 {
-	public DeleteRoleUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public DeleteRoleUnauthorized_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

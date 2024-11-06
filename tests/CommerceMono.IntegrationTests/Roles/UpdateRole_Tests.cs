@@ -6,6 +6,7 @@ using CommerceMono.IntegrationTests.Utilities;
 using CommerceMono.Modules.Permissions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
@@ -13,14 +14,20 @@ public class UpdateRoleTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
-	protected UpdateRoleTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	protected UpdateRoleTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 }
 
 public class UpdateRole_Tests : UpdateRoleTestBase
 {
-	public UpdateRole_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public UpdateRole_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -97,7 +104,10 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 
 public class UpdateRolePermissions_Tests : UpdateRoleTestBase
 {
-	public UpdateRolePermissions_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public UpdateRolePermissions_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -211,7 +221,10 @@ public class UpdateRolePermissions_Tests : UpdateRoleTestBase
 
 public class UpdateRoleUnauthorized_Tests : UpdateRoleTestBase
 {
-	public UpdateRoleUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public UpdateRoleUnauthorized_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 

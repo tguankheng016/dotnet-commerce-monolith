@@ -3,6 +3,7 @@ using CommerceMono.Application.Roles.Features.CreatingRole.V1;
 using CommerceMono.IntegrationTests.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
@@ -10,14 +11,20 @@ public class CreateRoleTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
-	protected CreateRoleTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	protected CreateRoleTestBase(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 }
 
 public class CreateRole_Tests : CreateRoleTestBase
 {
-	public CreateRole_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public CreateRole_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
@@ -73,7 +80,10 @@ public class CreateRole_Tests : CreateRoleTestBase
 
 public class CreateRoleUnauthorized_Tests : CreateRoleTestBase
 {
-	public CreateRoleUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	public CreateRoleUnauthorized_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
 	}
 
