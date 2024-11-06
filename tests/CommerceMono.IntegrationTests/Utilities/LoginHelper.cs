@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CommerceMono.Application.Identities.Services;
+using CommerceMono.Application.Users.Constants;
 using CommerceMono.Application.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,5 +25,10 @@ public static class LoginHelper
 		client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
 		return client;
+	}
+
+	public static Task<HttpClient> LoginAsAdmin(this TestWebApplicationFactory apiFactory)
+	{
+		return LoginAs(apiFactory, UserConsts.DefaultUsername.Admin);
 	}
 }

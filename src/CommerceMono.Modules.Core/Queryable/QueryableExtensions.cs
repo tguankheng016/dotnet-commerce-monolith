@@ -20,7 +20,7 @@ public static class QueryableExtensions
         this IQueryable<T> query,
         IPageRequest pagedResultRequest)
     {
-        return query.PageBy<T>(pagedResultRequest.SkipCount, pagedResultRequest.MaxResultCount);
+        return query.PageBy<T>(pagedResultRequest.SkipCount ?? 0, pagedResultRequest.MaxResultCount ?? 10);
     }
 
     public static IQueryable<T> WhereIf<T>(

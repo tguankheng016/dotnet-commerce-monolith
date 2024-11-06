@@ -2,9 +2,9 @@ namespace CommerceMono.Modules.Core.Pagination;
 
 public interface IPageRequest
 {
-    int SkipCount { get; init; }
+    int? SkipCount { get; init; }
 
-    int MaxResultCount { get; init; }
+    int? MaxResultCount { get; init; }
 
     string? Filters { get; init; }
 

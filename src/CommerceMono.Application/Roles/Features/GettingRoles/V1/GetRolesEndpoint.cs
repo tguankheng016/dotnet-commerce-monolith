@@ -20,7 +20,7 @@ public class GetRolesEndpoint : IMinimalEndpoint
 {
 	public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
 	{
-		builder.MapGet($"{EndpointConfig.BaseApiPath}/identity/roles", Handle)
+		builder.MapGet($"{EndpointConfig.BaseApiPath}/roles", Handle)
 			.RequireAuthorization(RolePermissions.Pages_Administration_Roles)
 			.WithName("GetRoles")
 			.WithApiVersionSet(builder.GetApiVersionSet())
@@ -41,8 +41,8 @@ public class GetRolesEndpoint : IMinimalEndpoint
 	{
 		var query = new GetRolesQuery()
 		{
-			SkipCount = request.SkipCount,
-			MaxResultCount = request.MaxResultCount,
+			SkipCount = request.SkipCount ?? 0,
+			MaxResultCount = request.MaxResultCount ?? 0,
 			Filters = request.Filters,
 			Sorting = request.Sorting
 		};
