@@ -2,6 +2,7 @@ using CommerceMono.Application.Roles.Dtos;
 using CommerceMono.Application.Roles.Models;
 using CommerceMono.Application.Users.Services;
 using CommerceMono.Modules.Core.CQRS;
+using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Web;
 using MediatR;
@@ -70,7 +71,12 @@ internal class GetRoleByIdHandler(
 		{
 			// Edit
 			var role = await roleManager.Roles
-				.FirstAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
+				.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
+
+			if (role is null)
+			{
+				throw new NotFoundException("Role not found");
+			}
 
 			var mapper = new RoleMapper();
 

@@ -113,7 +113,7 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 			{
 				var databaseValues = await entry.GetDatabaseValuesAsync(cancellationToken);
 
-				if (databaseValues == null)
+				if (databaseValues is null)
 				{
 					_logger?.LogError("The record no longer exists in the database, The record has been deleted by another user.");
 					throw;

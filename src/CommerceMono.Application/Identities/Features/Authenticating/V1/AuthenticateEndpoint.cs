@@ -47,7 +47,7 @@ public class AuthenticateEndpoint : IMinimalEndpoint
 		var identityUser = await userManager.FindByNameAsync(request.UsernameOrEmailAddress!)
 			?? await userManager.FindByEmailAsync(request.UsernameOrEmailAddress!);
 
-		if (identityUser == null)
+		if (identityUser is null)
 		{
 			throw new BadRequestException($"Invalid username or password!");
 		}

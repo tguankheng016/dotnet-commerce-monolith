@@ -98,7 +98,7 @@ internal class RefreshTokenHandler(
 			throw new BadRequestException(sessionExpiredErrorMsg);
 		}
 
-		if (principal == null)
+		if (principal is null)
 		{
 			throw new BadRequestException(sessionExpiredErrorMsg);
 		}
@@ -110,7 +110,7 @@ internal class RefreshTokenHandler(
 				principal.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value
 			);
 
-		if (user == null)
+		if (user is null)
 		{
 			throw new BadRequestException("Unknown user or user identifier");
 		}

@@ -20,21 +20,21 @@ public class TokenSecurityStampValidator : ITokenSecurityStampValidator
 
 	public async Task<bool> ValidateAsync(ClaimsPrincipal claimsPrincipal)
 	{
-		if (claimsPrincipal?.Claims == null || !claimsPrincipal.Claims.Any())
+		if (claimsPrincipal?.Claims is null || !claimsPrincipal.Claims.Any())
 		{
 			return false;
 		}
 
 		var securityStampKey = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == TokenConsts.SecurityStampKey);
 
-		if (securityStampKey == null)
+		if (securityStampKey is null)
 		{
 			return false;
 		}
 
 		var sub = claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
 
-		if (sub == null)
+		if (sub is null)
 		{
 			return false;
 		}

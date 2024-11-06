@@ -26,7 +26,7 @@ public class TokenSecurityStampDbValidator : ITokenSecurityStampDbValidator
     {
         var user = await _userManager.FindByIdAsync(userId);
 
-        if (user == null)
+        if (user is null)
         {
             return false;
         }

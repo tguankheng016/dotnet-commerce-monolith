@@ -20,21 +20,21 @@ public class TokenKeyValidator : ITokenKeyValidator
 
 	public async Task<bool> ValidateAsync(ClaimsPrincipal claimsPrincipal)
 	{
-		if (claimsPrincipal?.Claims == null || !claimsPrincipal.Claims.Any())
+		if (claimsPrincipal?.Claims is null || !claimsPrincipal.Claims.Any())
 		{
 			return false;
 		}
 
 		var tokenKey = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == TokenConsts.TokenValidityKey);
 
-		if (tokenKey == null)
+		if (tokenKey is null)
 		{
 			return false;
 		}
 
 		var sub = claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
 
-		if (sub == null)
+		if (sub is null)
 		{
 			return false;
 		}

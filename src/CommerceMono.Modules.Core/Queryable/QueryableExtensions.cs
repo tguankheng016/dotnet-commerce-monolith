@@ -10,7 +10,7 @@ public static class QueryableExtensions
         int skipCount,
         int maxResultCount)
     {
-        if (query == null)
+        if (query is null)
             throw new ArgumentNullException(nameof(query));
 
         return query.Skip<T>(skipCount).Take<T>(maxResultCount);

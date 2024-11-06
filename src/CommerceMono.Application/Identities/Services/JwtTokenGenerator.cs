@@ -50,7 +50,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 			claims: claims,
 			notBefore: now,
 			signingCredentials: _tokenAuthConfiguration.SigningCredentials,
-			expires: expiration == null ? null : now.Add(expiration.Value)
+			expires: expiration is null ? null : now.Add(expiration.Value)
 		);
 
 		return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);

@@ -43,7 +43,7 @@ public class GetCurrentSession_Tests : AppTestBase
 		var currentSession = await response.Content.ReadFromJsonAsync<GetCurrentSessionResult>();
 		currentSession.Should().NotBeNull();
 
-		if (username == null)
+		if (username is null)
 		{
 			currentSession!.User.Should().BeNull();
 		}

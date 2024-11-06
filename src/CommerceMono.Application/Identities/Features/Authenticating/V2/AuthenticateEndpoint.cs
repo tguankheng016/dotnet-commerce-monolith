@@ -87,7 +87,7 @@ internal class AuthenticateHandler(
 		var identityUser = await userManager.FindByNameAsync(command.UsernameOrEmailAddress!)
 			?? await userManager.FindByEmailAsync(command.UsernameOrEmailAddress!);
 
-		if (identityUser == null)
+		if (identityUser is null)
 		{
 			throw new BadRequestException($"Invalid username or password!");
 		}

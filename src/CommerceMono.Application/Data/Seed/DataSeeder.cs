@@ -47,7 +47,7 @@ public class DataSeeder : IDataSeeder
 	private async Task SeedUsers()
 	{
 		// Seed Admin User
-		if (await _userManager.FindByNameAsync(UserConsts.DefaultUsername.Admin) == null)
+		if (await _userManager.FindByNameAsync(UserConsts.DefaultUsername.Admin) is null)
 		{
 			var adminUser = new User
 			{

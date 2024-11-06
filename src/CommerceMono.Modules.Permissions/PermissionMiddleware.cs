@@ -28,7 +28,7 @@ public class PermissionMiddleware
 		var userId = appSession.UserId;
 
 		// 1 - if the request is not authenticated, nothing to do
-		if (context.User.Identity == null || !context.User.Identity.IsAuthenticated || !userId.HasValue)
+		if (context.User.Identity is null || !context.User.Identity.IsAuthenticated || !userId.HasValue)
 		{
 			await _next(context);
 
