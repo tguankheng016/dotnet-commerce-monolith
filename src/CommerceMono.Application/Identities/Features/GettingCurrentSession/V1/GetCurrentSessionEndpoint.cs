@@ -69,7 +69,7 @@ internal class GetCurrentSessionHandler(
 		{
 			var user = await userManager.FindByIdAsync(userId.Value.ToString());
 
-			if (user != null)
+			if (user is not null)
 			{
 				var mapper = new IdentityMapper();
 				userDto = mapper.UserToUserLoginInfoDto(user);

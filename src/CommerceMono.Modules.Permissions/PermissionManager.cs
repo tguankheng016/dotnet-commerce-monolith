@@ -40,7 +40,7 @@ public class PermissionManager : IPermissionManager
 		var userPermissions = await _cacheProvider
 			.GetAsync<UserPermissionCacheItem>(UserPermissionCacheItem.GenerateCacheKey(userId), cancellationToken);
 
-		if (userPermissions != null && userPermissions.HasValue)
+		if (userPermissions is not null && userPermissions.HasValue)
 		{
 			foreach (var kvp in userPermissions.Value.Permissions)
 			{

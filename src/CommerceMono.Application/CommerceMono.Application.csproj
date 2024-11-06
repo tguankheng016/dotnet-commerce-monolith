@@ -13,8 +13,6 @@
 
   <ItemGroup>
     <Folder Include="Data/Migrations/" />
-    <Folder Include="Users/Dtos/" />
-    <Folder Include="Users/Features/" />
   </ItemGroup>
 
   <ItemGroup>

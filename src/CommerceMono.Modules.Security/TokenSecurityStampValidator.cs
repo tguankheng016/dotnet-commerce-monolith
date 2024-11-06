@@ -54,7 +54,7 @@ public class TokenSecurityStampValidator : ITokenSecurityStampValidator
 	{
 		var securityStampKey = await _cacheProvider.GetAsync<string>(GenerateCacheKey(userId));
 
-		return securityStampKey != null && securityStampKey.Value == securityStamp;
+		return securityStampKey is not null && securityStampKey.Value == securityStamp;
 	}
 
 	private string GenerateCacheKey(string userId) => SecurityStampCacheItem.GenerateCacheKey(userId);

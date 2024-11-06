@@ -35,7 +35,7 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 
 	public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
 	{
-		if (_currentTransaction != null) return;
+		if (_currentTransaction is not null) return;
 
 		_currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 	}
@@ -77,7 +77,7 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 		return Database.CreateExecutionStrategy();
 	}
 
-	public bool HasActiveTransaction => _currentTransaction != null;
+	public bool HasActiveTransaction => _currentTransaction is not null;
 
 	public Task ExecuteTransactionalAsync(CancellationToken cancellationToken = default)
 	{

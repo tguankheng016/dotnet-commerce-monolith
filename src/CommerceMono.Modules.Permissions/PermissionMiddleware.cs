@@ -38,7 +38,7 @@ public class PermissionMiddleware
 		var endpoint = context.GetEndpoint();
 		var requiresAuthorization = false;
 
-		if (endpoint != null)
+		if (endpoint is not null)
 		{
 			var metadata = endpoint.Metadata;
 			requiresAuthorization = metadata.OfType<AuthorizeAttribute>().Any();

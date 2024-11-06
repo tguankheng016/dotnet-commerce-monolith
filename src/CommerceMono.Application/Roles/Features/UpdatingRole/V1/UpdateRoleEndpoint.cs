@@ -79,7 +79,7 @@ internal class UpdateRoleHandler(
 	{
 		var role = await roleManager.FindByIdAsync(command.Id!.ToString()!);
 
-		if (role == null)
+		if (role is null)
 		{
 			throw new NotFoundException("Role not found");
 		}
@@ -114,7 +114,7 @@ internal class UpdateRoleHandler(
 			var rolePermissionToRemoved = await appDbContext.UserRolePermissions
 				.FirstOrDefaultAsync(x => x.RoleId == role.Id && x.Name == permission.Key, cancellationToken);
 
-			if (rolePermissionToRemoved != null)
+			if (rolePermissionToRemoved is not null)
 			{
 				appDbContext.UserRolePermissions.Remove(rolePermissionToRemoved);
 			}
@@ -140,7 +140,7 @@ internal class UpdateRoleHandler(
 			var rolePermissionToGranted = await appDbContext.UserRolePermissions
 				.FirstOrDefaultAsync(x => x.RoleId == role.Id && x.Name == permission, cancellationToken);
 
-			if (rolePermissionToGranted == null)
+			if (rolePermissionToGranted is null)
 			{
 				await appDbContext.UserRolePermissions.AddAsync(new UserRolePermission()
 				{

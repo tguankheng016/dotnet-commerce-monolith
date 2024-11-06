@@ -62,7 +62,7 @@ internal class DeleteRoleHandler(
 	{
 		var role = await roleManager.FindByIdAsync(command.Id.ToString());
 
-		if (role == null)
+		if (role is null)
 		{
 			throw new NotFoundException("Role not found");
 		}

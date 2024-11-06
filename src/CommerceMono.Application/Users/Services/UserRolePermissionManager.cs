@@ -72,7 +72,7 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 			{
 				var role = await _roleManager.FindByNameAsync(userRole);
 
-				if (role != null)
+				if (role is not null)
 				{
 					roleIds.Add(role.Id);
 				}

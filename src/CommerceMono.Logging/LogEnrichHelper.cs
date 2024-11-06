@@ -27,7 +27,7 @@ public static class LogEnrichHelper
 
         // Retrieve the IEndpointFeature selected for the request
         var endpoint = httpContext.GetEndpoint();
-        if (endpoint != null)
+        if (endpoint is not null)
         {
             diagnosticContext.Set("EndpointName", endpoint.DisplayName);
         }

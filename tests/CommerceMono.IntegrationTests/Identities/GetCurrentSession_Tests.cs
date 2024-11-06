@@ -25,7 +25,7 @@ public class GetCurrentSession_Tests : AppTestBase
 		// Arrange
 		HttpClient? client;
 
-		if (username != null)
+		if (username is not null)
 		{
 			client = await _apiFactory.LoginAs(username);
 		}

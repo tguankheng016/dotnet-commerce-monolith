@@ -36,7 +36,7 @@ public class SignOutEndpoint : IMinimalEndpoint
 		IMediator mediator, ClaimsPrincipal User, CancellationToken cancellationToken
 	)
 	{
-		if (User != null && User.Identity != null && User.Identity.IsAuthenticated)
+		if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
 		{
 			await mediator.Send(new SignOutCommand(User), cancellationToken);
 		}
@@ -77,7 +77,7 @@ internal class SignOutHandler(
 		var refreshTokenValidityKeyInClaims = command.UserClaim.Claims
 			.FirstOrDefault(c => c.Type == TokenConsts.RefreshTokenValidityKey);
 
-		if (refreshTokenValidityKeyInClaims != null)
+		if (refreshTokenValidityKeyInClaims is not null)
 		{
 			await RemoveTokenAsync(userId.Value, refreshTokenValidityKeyInClaims.Value);
 		}
@@ -90,7 +90,7 @@ internal class SignOutHandler(
 		var userToken = await appDbContext.UserTokens
 			.FirstOrDefaultAsync(x => x.UserId == userId && x.Name == tokenKey);
 
-		if (userToken != null)
+		if (userToken is not null)
 		{
 			// Remove Cache
 			var _cacheProvider = cacheManager.GetCachingProvider();

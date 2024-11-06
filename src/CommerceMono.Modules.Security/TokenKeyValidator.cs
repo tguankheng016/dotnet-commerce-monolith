@@ -55,7 +55,7 @@ public class TokenKeyValidator : ITokenKeyValidator
 	{
 		var tokenKeyCache = await _cacheProvider.GetAsync<string>(GenerateCacheKey(userId, tokenKey));
 
-		return tokenKeyCache != null && tokenKeyCache.HasValue;
+		return tokenKeyCache is not null && tokenKeyCache.HasValue;
 	}
 
 	private string GenerateCacheKey(long userId, string tokenKey) =>
