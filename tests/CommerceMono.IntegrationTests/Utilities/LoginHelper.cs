@@ -31,4 +31,9 @@ public static class LoginHelper
 	{
 		return LoginAs(apiFactory, UserConsts.DefaultUsername.Admin);
 	}
+
+	public static Task<HttpClient> LoginAsUser(this TestWebApplicationFactory apiFactory)
+	{
+		return LoginAs(apiFactory, UserConsts.DefaultUsername.User);
+	}
 }

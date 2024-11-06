@@ -4,6 +4,7 @@ using CommerceMono.Application.Roles.Models;
 using CommerceMono.IntegrationTests.Utilities;
 using CommerceMono.Modules.Core.Pagination;
 using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommerceMono.IntegrationTests.Roles;
@@ -99,5 +100,30 @@ public class GetRolesPaginated_Tests : GetRolesTestBase
 		roleResults!.TotalCount.Should().Be(totalCount);
 		roleResults!.Items!.Count().Should().Be(1);
 		roleResults!.Items[0]!.Name.Should().NotBe(RoleConsts.RoleName.Admin);
+	}
+}
+
+public class GetRolesUnauthorized_Tests : GetRolesTestBase
+{
+	public GetRolesUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	{
+	}
+
+	[Fact]
+	public async Task Should_Get_Roles_Unauthorized_Error_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsUser();
+		var sorting = nameof(Role.Name).Camelize() + " desc";
+		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
+
+		// Act
+		var response = await client.GetAsync(requestUri);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
 	}
 }

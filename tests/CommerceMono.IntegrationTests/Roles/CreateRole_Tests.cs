@@ -6,10 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
-public class CreateRole_Tests : AppTestBase
+public class CreateRoleTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
+	protected CreateRoleTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	{
+	}
+}
+
+public class CreateRole_Tests : CreateRoleTestBase
+{
 	public CreateRole_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
 	{
 	}
@@ -61,5 +68,32 @@ public class CreateRole_Tests : AppTestBase
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();
 		failureResponse!.Detail.Should().Be("Please enter the name");
+	}
+}
+
+public class CreateRoleUnauthorized_Tests : CreateRoleTestBase
+{
+	public CreateRoleUnauthorized_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
+	{
+	}
+
+	[Fact]
+	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsUser();
+		var request = new CreateRoleDto
+		{
+			Name = "TestRole"
+		};
+
+		// Act
+		var response = await client.PostAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
 	}
 }
