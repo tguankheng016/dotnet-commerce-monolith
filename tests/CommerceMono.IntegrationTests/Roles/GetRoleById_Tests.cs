@@ -60,16 +60,6 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
-}
-
-public class GetRoleByIdUnauthorized_Tests : GetRoleByIdTestBase
-{
-	public GetRoleByIdUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
 
 	[Fact]
 	public async Task Should_Create_Role_With_Unauthorized_Error_Test()

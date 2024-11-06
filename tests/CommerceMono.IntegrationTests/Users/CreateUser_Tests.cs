@@ -65,6 +65,33 @@ public class CreateUser_Tests : CreateUserTestBase
 		var newTotalCount = await DbContext.Users.CountAsync();
 		newTotalCount.Should().Be(totalCount + 1);
 	}
+
+	// TODO: Add Test For Duplicate Username and Email
+
+	[Fact]
+	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsUser();
+		var testUser = new Faker<CreateUserDto>()
+			.RuleFor(x => x.Id, 0)
+			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
+			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
+			.RuleFor(x => x.UserName, f => f.Internet.UserName())
+			.RuleFor(x => x.Email, f => f.Internet.Email())
+			.RuleFor(x => x.Password, f => f.Internet.Password());
+		var request = testUser.Generate();
+		request.ConfirmPassword = request.Password;
+
+		// Act
+		var response = await client.PostAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+	}
 }
 
 public class CreateUserValidation_Tests : CreateUserTestBase
@@ -174,40 +201,5 @@ public class CreateUserValidation_Tests : CreateUserTestBase
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
-}
-
-public class CreateUserUnauthorized_Tests : CreateUserTestBase
-{
-	public CreateUserUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
-
-	[Fact]
-	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
-	{
-		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
-		var testUser = new Faker<CreateUserDto>()
-			.RuleFor(x => x.Id, 0)
-			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
-			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
-			.RuleFor(x => x.UserName, f => f.Internet.UserName())
-			.RuleFor(x => x.Email, f => f.Internet.Email())
-			.RuleFor(x => x.Password, f => f.Internet.Password());
-		var request = testUser.Generate();
-		request.ConfirmPassword = request.Password;
-
-		// Act
-		var response = await client.PostAsJsonAsync(Endpoint, request);
-
-		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-
-		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-		failureResponse.Should().NotBeNull();
 	}
 }

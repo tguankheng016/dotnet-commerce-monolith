@@ -87,16 +87,6 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();
 	}
-}
-
-public class DeleteRoleUnauthorized_Tests : CreateRoleTestBase
-{
-	public DeleteRoleUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
 
 	[Fact]
 	public async Task Should_Create_Role_With_Unauthorized_Error_Test()

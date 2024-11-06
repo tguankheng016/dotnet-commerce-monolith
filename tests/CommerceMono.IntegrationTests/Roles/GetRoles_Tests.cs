@@ -50,47 +50,6 @@ public class GetRoles_Tests : GetRolesTestBase
 		roleResults!.TotalCount.Should().Be(totalCount);
 		roleResults!.Items!.Count().Should().Be(totalCount);
 	}
-}
-
-public class GetRolesFiltered_Tests : GetRolesTestBase
-{
-	public GetRolesFiltered_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
-
-	[Fact]
-	public async Task Should_Get_Roles_Filtered_Test()
-	{
-		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
-		var filterText = RoleConsts.RoleName.Admin.Substring(0, 3);
-
-		// Act
-		var response = await client.GetAsync($"{Endpoint}?{nameof(PageRequest.Filters).Camelize()}={filterText}");
-
-		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-		var roleResults = await response.Content.ReadFromJsonAsync<GetRolesResult>();
-
-		roleResults.Should().NotBeNull();
-		roleResults!.TotalCount.Should().Be(1);
-		roleResults!.Items!.Count().Should().Be(1);
-		roleResults!.Items[0]!.Name.Should().Be(RoleConsts.RoleName.Admin);
-	}
-}
-
-public class GetRolesPaginated_Tests : GetRolesTestBase
-{
-	public GetRolesPaginated_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
 
 	[Fact]
 	public async Task Should_Get_Roles_Paginated_Test()
@@ -114,15 +73,26 @@ public class GetRolesPaginated_Tests : GetRolesTestBase
 		roleResults!.Items!.Count().Should().Be(1);
 		roleResults!.Items[0]!.Name.Should().NotBe(RoleConsts.RoleName.Admin);
 	}
-}
 
-public class GetRolesUnauthorized_Tests : GetRolesTestBase
-{
-	public GetRolesUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+	[Fact]
+	public async Task Should_Get_Roles_Filtered_Test()
 	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var filterText = RoleConsts.RoleName.Admin.Substring(0, 3);
+
+		// Act
+		var response = await client.GetAsync($"{Endpoint}?{nameof(PageRequest.Filters).Camelize()}={filterText}");
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+		var roleResults = await response.Content.ReadFromJsonAsync<GetRolesResult>();
+
+		roleResults.Should().NotBeNull();
+		roleResults!.TotalCount.Should().Be(1);
+		roleResults!.Items!.Count().Should().Be(1);
+		roleResults!.Items[0]!.Name.Should().Be(RoleConsts.RoleName.Admin);
 	}
 
 	[Fact]

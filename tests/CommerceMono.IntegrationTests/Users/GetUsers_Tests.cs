@@ -50,16 +50,6 @@ public class GetUsers_Tests : GetUsersTestBase
 		userResults!.TotalCount.Should().Be(totalCount);
 		userResults!.Items!.Count().Should().Be(totalCount);
 	}
-}
-
-public class GetUsersFiltered_Tests : GetUsersTestBase
-{
-	public GetUsersFiltered_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
 
 	[Fact]
 	public async Task Should_Get_Users_Filtered_Test()
@@ -80,16 +70,6 @@ public class GetUsersFiltered_Tests : GetUsersTestBase
 		userResults!.TotalCount.Should().Be(1);
 		userResults!.Items!.Count().Should().Be(1);
 		userResults!.Items[0]!.UserName.Should().Be(UserConsts.DefaultUsername.Admin);
-	}
-}
-
-public class GetUsersPaginated_Tests : GetUsersTestBase
-{
-	public GetUsersPaginated_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
 	}
 
 	[Fact]
@@ -113,16 +93,6 @@ public class GetUsersPaginated_Tests : GetUsersTestBase
 		userResults!.TotalCount.Should().Be(totalCount);
 		userResults!.Items!.Count().Should().Be(1);
 		userResults!.Items[0]!.UserName.Should().NotBe(UserConsts.DefaultUsername.Admin);
-	}
-}
-
-public class GetUsersUnauthorized_Tests : GetUsersTestBase
-{
-	public GetUsersUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
 	}
 
 	[Fact]

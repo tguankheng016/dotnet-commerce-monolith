@@ -60,16 +60,6 @@ public class GetUserById_Tests : GetUserByIdTestBase
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
-}
-
-public class GetUserByIdUnauthorized_Tests : GetUserByIdTestBase
-{
-	public GetUserByIdUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
 
 	[Fact]
 	public async Task Should_Create_User_With_Unauthorized_Error_Test()

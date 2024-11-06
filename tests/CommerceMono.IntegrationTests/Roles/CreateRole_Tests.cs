@@ -76,16 +76,6 @@ public class CreateRole_Tests : CreateRoleTestBase
 		failureResponse.Should().NotBeNull();
 		failureResponse!.Detail.Should().Be("Please enter the name");
 	}
-}
-
-public class CreateRoleUnauthorized_Tests : CreateRoleTestBase
-{
-	public CreateRoleUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
 
 	[Fact]
 	public async Task Should_Create_Role_With_Unauthorized_Error_Test()

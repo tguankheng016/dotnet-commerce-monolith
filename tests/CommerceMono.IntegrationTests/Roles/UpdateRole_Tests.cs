@@ -100,6 +100,27 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 		failureResponse.Should().NotBeNull();
 		failureResponse!.Detail.Should().Be("You cannot change the name of static role");
 	}
+
+	[Fact]
+	public async Task Should_Update_Role_With_Unauthorized_Error_Test()
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsUser();
+		var request = new EditRoleDto
+		{
+			Id = 2,
+			Name = "TestRole"
+		};
+
+		// Act
+		var response = await client.PostAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+	}
 }
 
 public class UpdateRolePermissions_Tests : UpdateRoleTestBase
@@ -216,36 +237,5 @@ public class UpdateRolePermissions_Tests : UpdateRoleTestBase
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
-}
-
-public class UpdateRoleUnauthorized_Tests : UpdateRoleTestBase
-{
-	public UpdateRoleUnauthorized_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
-
-	[Fact]
-	public async Task Should_Update_Role_With_Unauthorized_Error_Test()
-	{
-		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
-		var request = new EditRoleDto
-		{
-			Id = 2,
-			Name = "TestRole"
-		};
-
-		// Act
-		var response = await client.PostAsJsonAsync(Endpoint, request);
-
-		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-
-		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-		failureResponse.Should().NotBeNull();
 	}
 }

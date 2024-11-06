@@ -24,7 +24,7 @@ public class UpdateUserEndpoint : IMinimalEndpoint
 {
 	public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
 	{
-		builder.MapPut($"{EndpointConfig.BaseApiPath}/identity/user", Handle)
+		builder.MapPut($"{EndpointConfig.BaseApiPath}/user", Handle)
 			.RequireAuthorization(UserPermissions.Pages_Administration_Users_Edit)
 			.WithName("UpdateUser")
 			.WithApiVersionSet(builder.GetApiVersionSet())
@@ -74,8 +74,8 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserCommand>
 		RuleFor(x => x.UserName).NotEmpty().WithMessage("Please enter the username");
 		RuleFor(x => x.FirstName).NotEmpty().WithMessage("Please enter the first name");
 		RuleFor(x => x.LastName).NotEmpty().WithMessage("Please enter the last name");
-		RuleFor(x => x.Email).NotEmpty().WithMessage("Please enter the last email")
-			.EmailAddress().WithMessage("A valid email is required");
+		RuleFor(x => x.Email).NotEmpty().WithMessage("Please enter the email address")
+			.EmailAddress().WithMessage("Please enter a valid email address");
 		RuleFor(x => x.FirstName).MaximumLength(User.MaxFirstNameLength)
 			.WithMessage($"The first name length cannot exceed {User.MaxFirstNameLength} characters.");
 		RuleFor(x => x.LastName).MaximumLength(User.MaxLastNameLength)
