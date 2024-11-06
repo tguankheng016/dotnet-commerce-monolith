@@ -1,32 +1,18 @@
-using System.Net;
-using System.Net.Http.Json;
-using CommerceMono.Application.Data;
 using CommerceMono.Application.Identities.Features.Authenticating.V2;
 using CommerceMono.Application.Identities.Features.RefreshingToken.V1;
 using CommerceMono.Application.Users.Constants;
-using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Security;
-using EasyCaching.Core;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
-public class RefreshToken_Tests : IClassFixture<TestWebApplicationFactory>
+public class RefreshToken_Tests : AppTestBase
 {
-	private readonly HttpClient _client;
-	private readonly AppDbContext _dbContext;
-	private readonly IEasyCachingProvider _cacheProvider;
-	private readonly string _endpoint = "api/v1/identities/refresh-token";
+	protected override string EndpointName { get; } = "identities/refresh-token";
 
-	public RefreshToken_Tests(TestWebApplicationFactory apiFactory)
+	public RefreshToken_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
 	{
-		_client = apiFactory.CreateClient();
-		var _scope = apiFactory.Services.CreateScope();
-		_dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
-		_cacheProvider = _scope.ServiceProvider.GetRequiredService<ICacheManager>().GetCachingProvider();
 	}
 
 	[Fact]
@@ -34,14 +20,14 @@ public class RefreshToken_Tests : IClassFixture<TestWebApplicationFactory>
 	{
 		// Arrange
 		var request = new AuthenticateRequest(UserConsts.DefaultUsername.Admin, "123qwe");
-		var user = await _dbContext.Users.FirstAsync(x => x.NormalizedUserName == UserConsts.DefaultUsername.Admin.ToUpper());
-		var response = await _client.PostAsJsonAsync("api/v2/identities/authenticate", request);
+		var user = await DbContext.Users.FirstAsync(x => x.NormalizedUserName == UserConsts.DefaultUsername.Admin.ToUpper());
+		var response = await Client.PostAsJsonAsync("api/v2/identities/authenticate", request);
 		var authenticateResponse = await response.Content.ReadFromJsonAsync<AuthenticateResult>();
 
-		_client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authenticateResponse!.AccessToken}");
+		Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authenticateResponse!.AccessToken}");
 
 		// Act
-		response = await _client.PostAsJsonAsync(_endpoint, new RefreshTokenRequest(authenticateResponse!.RefreshToken));
+		response = await Client.PostAsJsonAsync(Endpoint, new RefreshTokenRequest(authenticateResponse!.RefreshToken));
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -51,7 +37,7 @@ public class RefreshToken_Tests : IClassFixture<TestWebApplicationFactory>
 		refreshTokenResponse!.AccessToken.Should().NotBeNullOrEmpty();
 		refreshTokenResponse!.ExpireInSeconds.Should().Be((int)TokenConsts.AccessTokenExpiration.TotalSeconds);
 
-		var tokenKeyCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}.{user.Id}");
+		var tokenKeyCaches = await CacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}.{user.Id}");
 		tokenKeyCaches.Should().NotBeNull();
 		tokenKeyCaches!.Count().Should().Be(3);
 	}
@@ -61,7 +47,7 @@ public class RefreshToken_Tests : IClassFixture<TestWebApplicationFactory>
 	{
 		// Arrange
 		// Act
-		var response = await _client.PostAsJsonAsync(_endpoint, new { });
+		var response = await Client.PostAsJsonAsync(Endpoint, new { });
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -76,25 +62,25 @@ public class RefreshToken_Tests : IClassFixture<TestWebApplicationFactory>
 	{
 		// Arrange
 		var request = new AuthenticateRequest(UserConsts.DefaultUsername.Admin, "123qwe");
-		var user = await _dbContext.Users.FirstAsync(x => x.NormalizedUserName == UserConsts.DefaultUsername.Admin.ToUpper());
-		var response = await _client.PostAsJsonAsync("api/v2/identities/authenticate", request);
+		var user = await DbContext.Users.FirstAsync(x => x.NormalizedUserName == UserConsts.DefaultUsername.Admin.ToUpper());
+		var response = await Client.PostAsJsonAsync("api/v2/identities/authenticate", request);
 		var authenticateResponse = await response.Content.ReadFromJsonAsync<AuthenticateResult>();
 
-		_client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authenticateResponse!.AccessToken}");
+		Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authenticateResponse!.AccessToken}");
 
-		var userTokens = await _dbContext.UserTokens.Where(x => x.UserId == user.Id).ToListAsync();
+		var userTokens = await DbContext.UserTokens.Where(x => x.UserId == user.Id).ToListAsync();
 
 		foreach (var userToken in userTokens)
 		{
 			userToken.ExpireDate = DateTimeOffset.Now.AddMinutes(-5);
 		}
 
-		await _dbContext.SaveChangesAsync();
+		await DbContext.SaveChangesAsync();
 
-		await _cacheProvider.FlushAsync();
+		await CacheProvider.FlushAsync();
 
 		// Act
-		response = await _client.PostAsJsonAsync(_endpoint, new RefreshTokenRequest(authenticateResponse!.RefreshToken));
+		response = await Client.PostAsJsonAsync(Endpoint, new RefreshTokenRequest(authenticateResponse!.RefreshToken));
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -109,7 +95,7 @@ public class RefreshToken_Tests : IClassFixture<TestWebApplicationFactory>
 	{
 		// Arrange
 		// Act
-		var response = await _client.PostAsJsonAsync(_endpoint, new RefreshTokenRequest("invalid-token"));
+		var response = await Client.PostAsJsonAsync(Endpoint, new RefreshTokenRequest("invalid-token"));
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);

@@ -22,6 +22,9 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+    <Using Include="System.Net" />
+    <Using Include="System.Net.Http.Json" />
   </ItemGroup>
 
   <ItemGroup>

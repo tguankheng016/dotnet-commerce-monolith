@@ -1,20 +1,17 @@
 
-using System.Net;
-using System.Net.Http.Json;
 using CommerceMono.Application.Identities.Features.GettingCurrentSession.V1;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.IntegrationTests.Utilities;
 using CommerceMono.Modules.Permissions;
-using FluentAssertions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
-public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
+public class GetCurrentSession_Tests : AppTestBase
 {
 	private readonly TestWebApplicationFactory _apiFactory;
-	private readonly string _endpoint = "api/v1/identities/current-session";
+	protected override string EndpointName { get; } = "identities/current-session";
 
-	public GetCurrentSession_Tests(TestWebApplicationFactory apiFactory)
+	public GetCurrentSession_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
 	{
 		_apiFactory = apiFactory;
 	}
@@ -34,11 +31,11 @@ public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
 		}
 		else
 		{
-			client = _apiFactory.CreateClient();
+			client = Client;
 		}
 
 		// Act
-		var response = await client.GetAsync(_endpoint);
+		var response = await client.GetAsync(Endpoint);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);

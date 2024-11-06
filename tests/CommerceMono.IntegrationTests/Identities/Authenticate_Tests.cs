@@ -1,30 +1,18 @@
-using System.Net;
-using System.Net.Http.Json;
-using CommerceMono.Application.Data;
 using CommerceMono.Application.Identities.Features.Authenticating.V1;
 using CommerceMono.Application.Users.Constants;
-using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Security;
-using EasyCaching.Core;
-using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
-public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
+public class Authenticate_Tests : AppTestBase
 {
-	private readonly HttpClient _client;
-	private readonly AppDbContext _dbContext;
-	private readonly IEasyCachingProvider _cacheProvider;
-	private readonly string _endpoint = "api/v2/identities/authenticate";
+	protected override string EndpointVersion { get; } = "v2";
+	protected override string EndpointName { get; } = "identities/authenticate";
 
-	public Authenticate_Tests(TestWebApplicationFactory apiFactory)
+	public Authenticate_Tests(TestWebApplicationFactory apiFactory) : base(apiFactory)
 	{
-		_client = apiFactory.CreateClient();
-		var _scope = apiFactory.Services.CreateScope();
-		_dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
-		_cacheProvider = _scope.ServiceProvider.GetRequiredService<ICacheManager>().GetCachingProvider();
 	}
 
 	[Theory]
@@ -34,10 +22,10 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 	{
 		// Arrange
 		var request = new AuthenticateRequest(username, password);
-		var user = await _dbContext.Users.FirstAsync(x => x.NormalizedUserName == username.ToUpper());
+		var user = await DbContext.Users.FirstAsync(x => x.NormalizedUserName == username.ToUpper());
 
 		// Act
-		var response = await _client.PostAsJsonAsync(_endpoint, request);
+		var response = await Client.PostAsJsonAsync(Endpoint, request);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -49,12 +37,12 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 		authenticateResponse!.RefreshToken.Should().NotBeNullOrEmpty();
 		authenticateResponse!.RefreshTokenExpireInSeconds.Should().Be((int)TokenConsts.RefreshTokenExpiration.TotalSeconds);
 
-		var tokenKeyCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}.{user.Id}");
+		var tokenKeyCaches = await CacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}.{user.Id}");
 		tokenKeyCaches.Should().NotBeNull();
 		// Access and Refresh
 		tokenKeyCaches!.Count().Should().Be(2);
 
-		var securityStampCaches = await _cacheProvider.GetByPrefixAsync<string>($"{TokenConsts.SecurityStampKey}.{user.Id}");
+		var securityStampCaches = await CacheProvider.GetByPrefixAsync<string>($"{TokenConsts.SecurityStampKey}.{user.Id}");
 		securityStampCaches.Should().NotBeNull();
 		securityStampCaches!.Count().Should().Be(1);
 	}
@@ -62,16 +50,21 @@ public class Authenticate_Tests : IClassFixture<TestWebApplicationFactory>
 	[Theory]
 	[InlineData(UserConsts.DefaultUsername.Admin, "123123")]
 	[InlineData(UserConsts.DefaultUsername.User, "123123")]
-	[InlineData(null, null)]
-	public async Task Should_Not_Authenticate_With_Invalid_Credentials_Test(string username, string password)
+	[InlineData(null, null, "Please enter the username or email address")]
+	[InlineData(UserConsts.DefaultUsername.Admin, null, "Please enter the password")]
+	public async Task Should_Not_Authenticate_With_Invalid_Credentials_Test(string username, string password, string errorMessage = "Invalid username or password!")
 	{
 		// Arrange
 		var request = new AuthenticateRequest(username, password);
 
 		// Act
-		var response = await _client.PostAsJsonAsync(_endpoint, request);
+		var response = await Client.PostAsJsonAsync(Endpoint, request);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+		failureResponse!.Detail.Should().Be(errorMessage);
 	}
 }

@@ -1,29 +1,19 @@
-using System.Net;
-using System.Net.Http.Json;
-using CommerceMono.Application.Data;
 using CommerceMono.Application.Roles.Constants;
 using CommerceMono.Application.Roles.Features.GettingRoles.V1;
 using CommerceMono.Application.Roles.Models;
 using CommerceMono.IntegrationTests.Utilities;
 using CommerceMono.Modules.Core.Pagination;
-using FluentAssertions;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
-public class GetRolesTestBase : IClassFixture<TestWebApplicationFactory>
+public class GetRolesTestBase : AppTestBase
 {
-	protected readonly TestWebApplicationFactory _apiFactory;
-	protected readonly AppDbContext _dbContext;
-	protected readonly string _endpoint = "api/v1/roles";
+	protected override string EndpointName { get; } = "roles";
 
-	protected GetRolesTestBase(TestWebApplicationFactory apiFactory)
+	protected GetRolesTestBase(TestWebApplicationFactory apiFactory) : base(apiFactory)
 	{
-		_apiFactory = apiFactory;
-		var _scope = apiFactory.Services.CreateScope();
-		_dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	}
 }
 
@@ -37,11 +27,11 @@ public class GetRoles_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Test()
 	{
 		// Arrange
-		HttpClient? client = await _apiFactory.LoginAsAdmin();
-		var totalCount = await _dbContext.Roles.CountAsync();
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var totalCount = await DbContext.Roles.CountAsync();
 
 		// Act
-		var response = await client.GetAsync(_endpoint);
+		var response = await client.GetAsync(Endpoint);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -64,11 +54,11 @@ public class GetRolesFiltered_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Filtered_Test()
 	{
 		// Arrange
-		HttpClient? client = await _apiFactory.LoginAsAdmin();
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
 		var filterText = RoleConsts.RoleName.Admin.Substring(0, 3);
 
 		// Act
-		var response = await client.GetAsync($"{_endpoint}?{nameof(PageRequest.Filters).Camelize()}={filterText}");
+		var response = await client.GetAsync($"{Endpoint}?{nameof(PageRequest.Filters).Camelize()}={filterText}");
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -92,10 +82,10 @@ public class GetRolesPaginated_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Paginated_Test()
 	{
 		// Arrange
-		HttpClient? client = await _apiFactory.LoginAsAdmin();
-		var totalCount = await _dbContext.Roles.CountAsync();
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var totalCount = await DbContext.Roles.CountAsync();
 		var sorting = nameof(Role.Name).Camelize() + " desc";
-		var requestUri = $"{_endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
+		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
 
 		// Act
 		var response = await client.GetAsync(requestUri);
