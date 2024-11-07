@@ -89,10 +89,10 @@ internal class GetUsersHandler(
 		var filteredUsers = userManager.Users.AsNoTracking()
 			.WhereIf(!string.IsNullOrWhiteSpace(request.Filters),
 				e =>
-					(e.UserName != null && e.UserName.Contains(request.Filters!)) ||
+					(e.NormalizedUserName != null && e.NormalizedUserName.Contains(request.Filters!.ToUpper())) ||
 					e.FirstName.Contains(request.Filters!) ||
 					e.LastName.Contains(request.Filters!) ||
-					(e.Email != null && e.Email.Contains(request.Filters!))
+					(e.NormalizedEmail != null && e.NormalizedEmail.Contains(request.Filters!.ToUpper()))
 			);
 
 		IQueryable<User>? pagedAndFilteredUsers = null;

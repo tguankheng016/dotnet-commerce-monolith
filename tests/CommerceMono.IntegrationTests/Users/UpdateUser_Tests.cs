@@ -39,7 +39,7 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		// Arrange
 		var userId = 2;
 
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
 		var testUser = new Faker<EditUserDto>()
 			.RuleFor(x => x.Id, userId)
@@ -76,7 +76,7 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		// Arrange
 		var userId = 2;
 
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
 		var testUser = new Faker<EditUserDto>()
 			.RuleFor(x => x.Id, userId)
@@ -121,6 +121,41 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		var newTotalCount = await DbContext.Users.CountAsync();
 		newTotalCount.Should().Be(totalCount);
 	}
+}
+
+public class UpdateUserValidation_Tests : UpdateUserTestBase
+{
+	public UpdateUserValidation_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
+	{
+	}
+
+	[Fact]
+	public async Task Should_Update_User_With_Unauthorized_Error_Test()
+	{
+		// Arrange
+		var client = await ApiFactory.LoginAsUser();
+		var testUser = new Faker<EditUserDto>()
+			.RuleFor(x => x.Id, 2)
+			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
+			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
+			.RuleFor(x => x.UserName, f => f.Internet.UserName())
+			.RuleFor(x => x.Email, f => f.Internet.Email())
+			.RuleFor(x => x.Password, f => f.Internet.Password())
+			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
+		var request = testUser.Generate();
+
+		// Act
+		var response = await client.PutAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+	}
 
 	[Theory]
 	[InlineData(2, null, "admin@testgk.com", "Email 'admin@testgk.com' is already taken.")]
@@ -128,7 +163,7 @@ public class UpdateUser_Tests : UpdateUserTestBase
 	public async Task Should_Not_Update_User_With_Duplicate_Username_Or_Email_Test(long userId, string? username, string? email, string errorMessage)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var testUser = new Faker<EditUserDto>()
 			.RuleFor(x => x.Id, userId)
 			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
@@ -161,47 +196,12 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		failureResponse!.Detail.Should().Be(errorMessage);
 	}
 
-	[Fact]
-	public async Task Should_Update_Role_With_Unauthorized_Error_Test()
-	{
-		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
-		var testUser = new Faker<EditUserDto>()
-			.RuleFor(x => x.Id, 2)
-			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
-			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
-			.RuleFor(x => x.UserName, f => f.Internet.UserName())
-			.RuleFor(x => x.Email, f => f.Internet.Email())
-			.RuleFor(x => x.Password, f => f.Internet.Password())
-			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
-		var request = testUser.Generate();
-
-		// Act
-		var response = await client.PutAsJsonAsync(Endpoint, request);
-
-		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-
-		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-		failureResponse.Should().NotBeNull();
-	}
-}
-
-public class UpdateUserValidation_Tests : UpdateUserTestBase
-{
-	public UpdateUserValidation_Tests(
-		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
-	{
-	}
-
 	[Theory]
 	[ClassData(typeof(GetValidateUserUpdateTestData))]
 	public async Task Should_Update_Role_With_Invalid_Input_Test(EditUserDto request, string errorMessage)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act
 		var response = await client.PutAsJsonAsync(Endpoint, request);

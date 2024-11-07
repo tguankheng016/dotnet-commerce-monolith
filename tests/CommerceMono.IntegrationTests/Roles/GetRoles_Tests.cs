@@ -35,7 +35,7 @@ public class GetRoles_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Roles.CountAsync();
 
 		// Act
@@ -55,7 +55,7 @@ public class GetRoles_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Paginated_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Roles.CountAsync();
 		var sorting = nameof(Role.Name).Camelize() + " desc";
 		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
@@ -78,7 +78,7 @@ public class GetRoles_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Filtered_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var filterText = RoleConsts.RoleName.Admin.Substring(0, 3);
 
 		// Act
@@ -99,7 +99,7 @@ public class GetRoles_Tests : GetRolesTestBase
 	public async Task Should_Get_Roles_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 		var sorting = nameof(Role.Name).Camelize() + " desc";
 		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
 

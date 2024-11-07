@@ -31,7 +31,7 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 	public async Task Should_Delete_Role_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var newRole = new Role()
 		{
 			Name = "TestRole"
@@ -59,7 +59,7 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 	public async Task Should_Delete_Static_Role_With_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act
 		var response = await client.DeleteAsync($"{Endpoint}/1");
@@ -76,7 +76,7 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 	public async Task Should_Delete_Role_With_NotFound_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act
 		var response = await client.DeleteAsync($"{Endpoint}/100");
@@ -92,7 +92,7 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 		var newRole = new Role()
 		{
 			Name = "TestRole"

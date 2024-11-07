@@ -32,7 +32,7 @@ public class CreateRole_Tests : CreateRoleTestBase
 	public async Task Should_Create_Role_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Roles.CountAsync();
 		var request = new CreateRoleDto
 		{
@@ -60,7 +60,7 @@ public class CreateRole_Tests : CreateRoleTestBase
 	public async Task Should_Create_Role_With_Invalid_Name_Test(string roleName)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var request = new CreateRoleDto
 		{
 			Name = roleName
@@ -81,7 +81,7 @@ public class CreateRole_Tests : CreateRoleTestBase
 	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 		var request = new CreateRoleDto
 		{
 			Name = "TestRole"

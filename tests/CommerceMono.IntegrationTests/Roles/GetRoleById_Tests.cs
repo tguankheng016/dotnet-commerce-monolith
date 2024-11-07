@@ -33,7 +33,7 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 	public async Task Should_Get_Role_By_Id_Test(long roleId, string roleName)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
 		var response = await client.GetAsync($"{Endpoint}/{roleId}");
@@ -52,7 +52,7 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 	public async Task Should_Get_Role_NotFound_By_Invalid_Id_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
 		var response = await client.GetAsync($"{Endpoint}/100");
@@ -65,7 +65,7 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 
 		// Act
 		var response = await client.GetAsync($"{Endpoint}/1");

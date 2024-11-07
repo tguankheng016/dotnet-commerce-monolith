@@ -35,7 +35,7 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 	public async Task Should_Update_Role_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Roles.CountAsync();
 		var request = new EditRoleDto
 		{
@@ -64,7 +64,7 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 	public async Task Should_Get_Update_Role_NotFound_By_Invalid_Id_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var request = new EditRoleDto
 		{
 			Id = 100,
@@ -83,7 +83,7 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 	public async Task Should_Get_Update_Static_Role_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var request = new EditRoleDto
 		{
 			Id = 1,
@@ -105,7 +105,7 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 	public async Task Should_Update_Role_With_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 		var request = new EditRoleDto
 		{
 			Id = 2,
@@ -137,7 +137,7 @@ public class UpdateRolePermissions_Tests : UpdateRoleTestBase
 	public async Task Should_Update_Role_Permissions_Test(long roleId, List<string> permissionsToUpdate, List<string> expectedGrantedPermissions, List<string> expectedProhibitedPermissions)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var role = await DbContext.Roles.FirstAsync(x => x.Id == roleId);
 		var request = new EditRoleDto
 		{

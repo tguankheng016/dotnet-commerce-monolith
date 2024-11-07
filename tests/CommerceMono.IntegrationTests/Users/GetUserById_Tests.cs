@@ -33,7 +33,7 @@ public class GetUserById_Tests : GetUserByIdTestBase
 	public async Task Should_Get_User_By_Id_Test(long userId, string userName)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
 		var response = await client.GetAsync($"{Endpoint}/{userId}");
@@ -52,7 +52,7 @@ public class GetUserById_Tests : GetUserByIdTestBase
 	public async Task Should_Get_User_NotFound_By_Invalid_Id_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
 		var response = await client.GetAsync($"{Endpoint}/100");
@@ -65,7 +65,7 @@ public class GetUserById_Tests : GetUserByIdTestBase
 	public async Task Should_Create_User_With_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 
 		// Act
 		var response = await client.GetAsync($"{Endpoint}/1");

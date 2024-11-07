@@ -36,7 +36,7 @@ public class CreateUser_Tests : CreateUserTestBase
 	public async Task Should_Create_User_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
 		var testUser = new Faker<CreateUserDto>()
 			.RuleFor(x => x.Id, 0)
@@ -88,7 +88,7 @@ public class CreateUser_Tests : CreateUserTestBase
 	public async Task Should_Not_Create_User_With_Duplicate_Username_Or_Email_Test(string? username, string? email, string errorMessage)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var testUser = new Faker<CreateUserDto>()
 			.RuleFor(x => x.Id, 0)
 			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
@@ -125,7 +125,7 @@ public class CreateUser_Tests : CreateUserTestBase
 	public async Task Should_Create_User_With_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 		var testUser = new Faker<CreateUserDto>()
 			.RuleFor(x => x.Id, 0)
 			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
@@ -161,7 +161,7 @@ public class CreateUserValidation_Tests : CreateUserTestBase
 	public async Task Should_Create_Role_With_Invalid_Input_Test(CreateUserDto request, string errorMessage)
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act
 		var response = await client.PostAsJsonAsync(Endpoint, request);

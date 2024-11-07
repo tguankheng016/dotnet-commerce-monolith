@@ -35,7 +35,7 @@ public class GetUsers_Tests : GetUsersTestBase
 	public async Task Should_Get_Users_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
 
 		// Act
@@ -55,7 +55,7 @@ public class GetUsers_Tests : GetUsersTestBase
 	public async Task Should_Get_Users_Filtered_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var filterText = UserConsts.DefaultUsername.Admin.Substring(0, 3);
 
 		// Act
@@ -76,7 +76,7 @@ public class GetUsers_Tests : GetUsersTestBase
 	public async Task Should_Get_Users_Paginated_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
 		var sorting = nameof(User.UserName).Camelize() + " desc";
 		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
@@ -99,7 +99,7 @@ public class GetUsers_Tests : GetUsersTestBase
 	public async Task Should_Get_Users_Unauthorized_Error_Test()
 	{
 		// Arrange
-		HttpClient? client = await ApiFactory.LoginAsUser();
+		var client = await ApiFactory.LoginAsUser();
 		var sorting = nameof(User.UserName).Camelize() + " desc";
 		var requestUri = $"{Endpoint}?{nameof(PageRequest.Sorting).Camelize()}={sorting}&{nameof(PageRequest.SkipCount).Camelize()}=0&{nameof(PageRequest.MaxResultCount).Camelize()}=1";
 
