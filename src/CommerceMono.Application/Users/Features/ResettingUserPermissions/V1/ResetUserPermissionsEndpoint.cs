@@ -21,7 +21,7 @@ public class ResetUserPermissionsEndpoint : IMinimalEndpoint
 {
 	public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
 	{
-		builder.MapPut($"{EndpointConfig.BaseApiPath}/identity/user/{{userid:long}}/reset-permissions", Handle)
+		builder.MapPut($"{EndpointConfig.BaseApiPath}/user/{{userid:long}}/reset-permissions", Handle)
 			.RequireAuthorization(UserPermissions.Pages_Administration_Users_ChangePermissions)
 			.WithName("ResetUserPermissions")
 			.WithApiVersionSet(builder.GetApiVersionSet())

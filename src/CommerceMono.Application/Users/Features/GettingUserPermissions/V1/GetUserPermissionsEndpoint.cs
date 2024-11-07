@@ -15,7 +15,7 @@ public class GetUserPermissionsEndpoint : IMinimalEndpoint
 {
 	public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
 	{
-		builder.MapGet($"{EndpointConfig.BaseApiPath}/identity/user/permissions/{{userid:long}}", Handle)
+		builder.MapGet($"{EndpointConfig.BaseApiPath}/user/{{userid:long}}/permissions", Handle)
 			.RequireAuthorization(UserPermissions.Pages_Administration_Users_ChangePermissions)
 			.WithName("GetUserPermissions")
 			.WithApiVersionSet(builder.GetApiVersionSet())
