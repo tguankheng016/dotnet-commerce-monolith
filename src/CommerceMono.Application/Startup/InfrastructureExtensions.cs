@@ -82,6 +82,7 @@ public static class InfrastructureExtensions
 
 		builder.Services.AddIdentity<User, Role>(config =>
 			{
+				config.User.RequireUniqueEmail = true;
 				config.Password.RequiredLength = 6;
 				config.Password.RequireDigit = false;
 				config.Password.RequireNonAlphanumeric = false;

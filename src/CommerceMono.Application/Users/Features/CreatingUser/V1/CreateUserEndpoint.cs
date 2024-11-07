@@ -95,6 +95,8 @@ internal class CreateUserHandler(
 		var mapper = new UserMapper();
 		var user = mapper.CreateUserDtoToUser(command);
 
+		var users = await userManager.Users.ToListAsync(cancellationToken);
+
 		var identityResult = await userManager.CreateAsync(user, command.Password!);
 
 		if (!identityResult.Succeeded)

@@ -1,4 +1,5 @@
 using System.Collections;
+using CommerceMono.Application.Users.Constants;
 using CommerceMono.Application.Users.Dtos;
 using CommerceMono.Application.Users.Features.CreatingUser.V1;
 using CommerceMono.Application.Users.Models;
@@ -47,6 +48,21 @@ public class CreateUser_Tests : CreateUserTestBase
 			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
 		var request = testUser.Generate();
 
+		// TODO: Soft Delete Violate Unique Index Of Username
+		// Create a deleted user with the same username and email
+		// await DbContext.Users.AddAsync(new User()
+		// {
+		// 	FirstName = request.FirstName!,
+		// 	LastName = request.LastName!,
+		// 	UserName = request.UserName,
+		// 	NormalizedUserName = request.UserName!.ToUpper(),
+		// 	Email = request.Email,
+		// 	NormalizedEmail = request.Email!.ToUpper(),
+		// 	IsDeleted = true
+		// });
+
+		// await DbContext.SaveChangesAsync();
+
 		// Act
 		var response = await client.PostAsJsonAsync(Endpoint, request);
 
@@ -66,10 +82,47 @@ public class CreateUser_Tests : CreateUserTestBase
 		newTotalCount.Should().Be(totalCount + 1);
 	}
 
-	// TODO: Add Test For Duplicate Username and Email
+	[Theory]
+	[InlineData(null, "admin@testgk.com", "Email 'admin@testgk.com' is already taken.")]
+	[InlineData(UserConsts.DefaultUsername.User, null, "Username 'gkuser1' is already taken.")]
+	public async Task Should_Not_Create_User_With_Duplicate_Username_Or_Email_Test(string? username, string? email, string errorMessage)
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var testUser = new Faker<CreateUserDto>()
+			.RuleFor(x => x.Id, 0)
+			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
+			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
+			.RuleFor(x => x.UserName, username)
+			.RuleFor(x => x.Email, email)
+			.RuleFor(x => x.Password, f => f.Internet.Password())
+			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
+
+		if (username is null)
+		{
+			testUser.RuleFor(x => x.UserName, (f) => f.Internet.UserName());
+		}
+
+		if (email is null)
+		{
+			testUser.RuleFor(x => x.Email, f => f.Internet.Email());
+		}
+
+		var request = testUser.Generate();
+
+		// Act
+		var response = await client.PostAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+		failureResponse!.Detail.Should().Be(errorMessage);
+	}
 
 	[Fact]
-	public async Task Should_Create_Role_With_Unauthorized_Error_Test()
+	public async Task Should_Create_User_With_Unauthorized_Error_Test()
 	{
 		// Arrange
 		HttpClient? client = await ApiFactory.LoginAsUser();

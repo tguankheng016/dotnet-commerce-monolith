@@ -1,8 +1,10 @@
 using System.Collections;
+using CommerceMono.Application.Users.Constants;
 using CommerceMono.Application.Users.Dtos;
 using CommerceMono.Application.Users.Features.UpdatingUser.V1;
 using CommerceMono.Application.Users.Models;
 using CommerceMono.IntegrationTests.Utilities;
+using CommerceMono.Modules.Permissions.Caching;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
@@ -35,10 +37,12 @@ public class UpdateUser_Tests : UpdateUserTestBase
 	public async Task Should_Update_User_Test()
 	{
 		// Arrange
+		var userId = 2;
+
 		HttpClient? client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
 		var testUser = new Faker<EditUserDto>()
-			.RuleFor(x => x.Id, 2)
+			.RuleFor(x => x.Id, userId)
 			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
 			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
 			.RuleFor(x => x.UserName, f => f.Internet.UserName())
@@ -62,13 +66,100 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		updateResult!.User.LastName.Should().Be(request.LastName);
 		updateResult!.User.Email.Should().Be(request.Email);
 
-		// TODO: Check User Role Cache
+		var newTotalCount = await DbContext.Users.CountAsync();
+		newTotalCount.Should().Be(totalCount);
+	}
+
+	[Fact]
+	public async Task Should_Update_User_With_Roles_Test()
+	{
+		// Arrange
+		var userId = 2;
+
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var totalCount = await DbContext.Users.CountAsync();
+		var testUser = new Faker<EditUserDto>()
+			.RuleFor(x => x.Id, userId)
+			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
+			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
+			.RuleFor(x => x.UserName, f => f.Internet.UserName())
+			.RuleFor(x => x.Email, f => f.Internet.Email())
+			.RuleFor(x => x.Password, f => f.Internet.Password())
+			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
+		var request = testUser.Generate();
+		var updatedRoles = new List<string>();
+		request.Roles = updatedRoles;
+
+		// Prepare the edited user caches
+		HttpClient? userClient = await ApiFactory.LoginAsUser();
+		await userClient.PutAsJsonAsync(Endpoint, request);
+		var userRoleCaches = await CacheProvider.GetAsync<UserRoleCacheItem>(UserRoleCacheItem.GenerateCacheKey(userId));
+		userRoleCaches.Should().NotBeNull();
+		userRoleCaches.HasValue.Should().BeTrue();
+
+		// Act
+		var response = await client.PutAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+		var updateResult = await response.Content.ReadFromJsonAsync<UpdateUserResult>();
+		updateResult.Should().NotBeNull();
+		updateResult!.User.Should().NotBeNull();
+		updateResult!.User.Id.Should().Be(2);
+		updateResult!.User.UserName.Should().Be(request.UserName);
+		updateResult!.User.FirstName.Should().Be(request.FirstName);
+		updateResult!.User.LastName.Should().Be(request.LastName);
+		updateResult!.User.Email.Should().Be(request.Email);
+		updateResult!.User.Roles.Should().BeEquivalentTo(updatedRoles);
+
+		// Validate Caches
+		userRoleCaches = await CacheProvider.GetAsync<UserRoleCacheItem>(UserRoleCacheItem.GenerateCacheKey(userId));
+		userRoleCaches.Should().NotBeNull();
+		userRoleCaches.HasValue.Should().BeFalse();
 
 		var newTotalCount = await DbContext.Users.CountAsync();
 		newTotalCount.Should().Be(totalCount);
 	}
 
-	// TODO: Add Test For Duplicate Username and Email
+	[Theory]
+	[InlineData(2, null, "admin@testgk.com", "Email 'admin@testgk.com' is already taken.")]
+	[InlineData(2, UserConsts.DefaultUsername.Admin, null, "Username 'admin' is already taken.")]
+	public async Task Should_Not_Update_User_With_Duplicate_Username_Or_Email_Test(long userId, string? username, string? email, string errorMessage)
+	{
+		// Arrange
+		HttpClient? client = await ApiFactory.LoginAsAdmin();
+		var testUser = new Faker<EditUserDto>()
+			.RuleFor(x => x.Id, userId)
+			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
+			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
+			.RuleFor(x => x.UserName, username)
+			.RuleFor(x => x.Email, email)
+			.RuleFor(x => x.Password, f => f.Internet.Password())
+			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
+
+		if (username is null)
+		{
+			testUser.RuleFor(x => x.UserName, (f) => f.Internet.UserName());
+		}
+
+		if (email is null)
+		{
+			testUser.RuleFor(x => x.Email, f => f.Internet.Email());
+		}
+
+		var request = testUser.Generate();
+
+		// Act
+		var response = await client.PutAsJsonAsync(Endpoint, request);
+
+		// Assert
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		failureResponse.Should().NotBeNull();
+		failureResponse!.Detail.Should().Be(errorMessage);
+	}
 
 	[Fact]
 	public async Task Should_Update_Role_With_Unauthorized_Error_Test()

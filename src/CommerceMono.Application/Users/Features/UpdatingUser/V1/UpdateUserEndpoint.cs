@@ -86,7 +86,6 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserCommand>
 // Handler
 internal class UpdateUserHandler(
 	UserManager<User> userManager,
-	RoleManager<Role> roleManager,
 	IUserRolePermissionManager userRolePermissionManager
 ) : ICommandHandler<UpdateUserCommand, UpdateUserResult>
 {
@@ -126,17 +125,6 @@ internal class UpdateUserHandler(
 			}
 		}
 
-		if (command.Roles is null || command.Roles.Count == 0)
-		{
-			var defaultRole = await roleManager.Roles
-				.FirstOrDefaultAsync(x => x.IsDefault, cancellationToken);
-
-			command.Roles = new List<string>
-			{
-				defaultRole?.Name ?? RoleConsts.RoleName.User
-			};
-		}
-
 		var userRoles = await userManager.GetRolesAsync(user);
 
 		var rolesToAdd = command.Roles.Where(r => !userRoles.Contains(r)).ToList();
@@ -168,6 +156,7 @@ internal class UpdateUserHandler(
 		}
 
 		var userDto = mapper.UserToUserDto(user);
+		userDto.Roles = await userManager.GetRolesAsync(user);
 
 		return new UpdateUserResult(userDto);
 	}
