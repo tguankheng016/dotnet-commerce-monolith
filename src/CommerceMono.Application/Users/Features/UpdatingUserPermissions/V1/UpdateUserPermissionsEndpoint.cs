@@ -31,7 +31,7 @@ public class UpdateUserPermissionsEndpoint : IMinimalEndpoint
 			.WithSummary("Update User Permissions")
 			.WithDescription("Update User Permissions")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

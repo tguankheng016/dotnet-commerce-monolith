@@ -28,7 +28,7 @@ public class GetUserByIdEndpoint : IMinimalEndpoint
 			.WithSummary("Get User By Id")
 			.WithDescription("Get User By Id")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

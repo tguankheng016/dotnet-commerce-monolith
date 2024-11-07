@@ -29,7 +29,7 @@ public class GetRolesEndpoint : IMinimalEndpoint
 			.WithSummary("Get All Roles")
 			.WithDescription("Get All Roles")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

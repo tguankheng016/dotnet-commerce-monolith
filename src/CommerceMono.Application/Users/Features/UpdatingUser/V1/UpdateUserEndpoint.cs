@@ -31,7 +31,7 @@ public class UpdateUserEndpoint : IMinimalEndpoint
 			.WithSummary("Update User")
 			.WithDescription("Update User")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

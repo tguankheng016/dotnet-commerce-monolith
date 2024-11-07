@@ -29,7 +29,7 @@ public class GetRoleByIdEndpoint : IMinimalEndpoint
 			.WithSummary("Get Role By Id")
 			.WithDescription("Get Role By Id")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

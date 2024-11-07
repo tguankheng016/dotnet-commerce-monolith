@@ -31,7 +31,7 @@ public class CreateUserEndpoint : IMinimalEndpoint
 			.WithSummary("Create New User")
 			.WithDescription("Create New User")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

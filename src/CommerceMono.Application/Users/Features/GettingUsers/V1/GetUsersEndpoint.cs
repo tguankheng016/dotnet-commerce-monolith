@@ -29,7 +29,7 @@ public class GetUsersEndpoint : IMinimalEndpoint
 			.WithSummary("Get All Users")
 			.WithDescription("Get All Users")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

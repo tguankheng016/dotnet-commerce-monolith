@@ -1,5 +1,6 @@
 using Asp.Versioning.Builder;
 using Asp.Versioning.Conventions;
+using CommerceMono.Modules.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -15,7 +16,7 @@ public static class UserApiVersionSets
 	public static ApiVersionSet GetApiVersionSet(this IEndpointRouteBuilder builder)
 	{
 		return builder.NewApiVersionSet(UserConfigs.ApiVersionSet)
-			.HasApiVersion(1.0)
+			.ToLatestApiVersion()
 			.Build();
 	}
 }

@@ -24,7 +24,7 @@ public class GetUserPermissionsEndpoint : IMinimalEndpoint
 			.WithSummary("Get User Permissions")
 			.WithDescription("Get User Permissions")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

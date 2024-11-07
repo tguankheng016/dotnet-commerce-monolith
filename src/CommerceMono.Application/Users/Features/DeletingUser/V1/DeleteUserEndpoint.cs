@@ -30,7 +30,7 @@ public class DeleteUserEndpoint : IMinimalEndpoint
 			.WithSummary("Delete User")
 			.WithDescription("Delete User")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

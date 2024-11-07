@@ -28,7 +28,7 @@ public class RefreshTokenEndpoint : IMinimalEndpoint
 			.WithSummary("Refresh Token")
 			.WithDescription("Refresh Token")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

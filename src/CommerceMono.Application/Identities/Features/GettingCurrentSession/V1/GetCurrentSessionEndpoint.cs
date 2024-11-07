@@ -24,7 +24,7 @@ public class GetCurrentSessionEndpoint : IMinimalEndpoint
 			.WithSummary("GetCurrentSession")
 			.WithDescription("GetCurrentSession")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

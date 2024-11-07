@@ -30,7 +30,7 @@ public class ResetUserPermissionsEndpoint : IMinimalEndpoint
 			.WithSummary("Reset User Permissions")
 			.WithDescription("Reset User Permissions")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

@@ -28,7 +28,7 @@ public class DeleteRoleEndpoint : IMinimalEndpoint
 			.WithSummary("Delete Role")
 			.WithDescription("Delete Role")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

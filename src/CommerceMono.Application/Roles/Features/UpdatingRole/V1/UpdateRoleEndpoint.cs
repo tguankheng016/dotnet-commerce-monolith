@@ -33,7 +33,7 @@ public class UpdateRoleEndpoint : IMinimalEndpoint
 			.WithSummary("Update New Role")
 			.WithDescription("Update New Role")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}

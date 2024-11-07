@@ -31,7 +31,7 @@ public class CreateRoleEndpoint : IMinimalEndpoint
 			.WithSummary("Create New Role")
 			.WithDescription("Create New Role")
 			.WithOpenApi()
-			.HasApiVersion(1.0);
+			.HasLatestApiVersion();
 
 		return builder;
 	}
