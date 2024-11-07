@@ -61,6 +61,7 @@ public class CreateRoleValidator : AbstractValidator<CreateRoleCommand>
 {
 	public CreateRoleValidator()
 	{
+		RuleFor(x => x.Id).Must(x => x is null || x == 0).WithMessage("Invalid role id");
 		RuleFor(x => x.Name).NotEmpty().WithMessage("Please enter the name");
 	}
 }

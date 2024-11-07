@@ -8,6 +8,7 @@ using CommerceMono.Modules.Core.Sessions;
 using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Security.Caching;
 using CommerceMono.Modules.Web;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -52,6 +53,15 @@ public record DeleteUserResult();
 
 // Command
 public record DeleteUserCommand(long Id) : ICommand<DeleteUserResult>, ITransactional;
+
+// Validator
+public class DeleteUserValidator : AbstractValidator<DeleteUserCommand>
+{
+	public DeleteUserValidator()
+	{
+		RuleFor(x => x.Id).GreaterThan(0).WithMessage("Invalid user id");
+	}
+}
 
 // Handler
 internal class DeleteUserHandler(

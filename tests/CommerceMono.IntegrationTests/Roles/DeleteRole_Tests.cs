@@ -72,17 +72,19 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 		failureResponse?.Detail.Should().Be("You cannot delete static role!");
 	}
 
-	[Fact]
-	public async Task Should_Delete_Role_With_NotFound_Error_Test()
+	[Theory]
+	[InlineData(0)]
+	[InlineData(100)]
+	public async Task Should_Delete_Role_With_Invalid_RoleId_Error_Test(long roleId)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act
-		var response = await client.DeleteAsync($"{Endpoint}/100");
+		var response = await client.DeleteAsync($"{Endpoint}/{roleId}");
 
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(roleId > 0 ? HttpStatusCode.NotFound : HttpStatusCode.BadRequest);
 
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();

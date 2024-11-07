@@ -60,14 +60,15 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 		newTotalCount.Should().Be(totalCount);
 	}
 
-	[Fact]
-	public async Task Should_Get_Update_Role_NotFound_By_Invalid_Id_Test()
+	[Theory]
+	[ClassData(typeof(UpdateRoleErrorByInvalidRoleIdTestData))]
+	public async Task Should_Get_Update_Role_Error_By_Invalid_RoleId_Test(long? roleId)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
 		var request = new EditRoleDto
 		{
-			Id = 100,
+			Id = roleId,
 			Name = RoleConsts.RoleName.User,
 			IsDefault = false
 		};
@@ -76,7 +77,7 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 		var response = await client.PutAsJsonAsync(Endpoint, request);
 
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(roleId > 0 ? HttpStatusCode.NotFound : HttpStatusCode.BadRequest);
 	}
 
 	[Fact]
@@ -120,6 +121,16 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();
+	}
+
+	public class UpdateRoleErrorByInvalidRoleIdTestData : TheoryData<long?>
+	{
+		public UpdateRoleErrorByInvalidRoleIdTestData()
+		{
+			Add(null);
+			Add(0);
+			Add(100);
+		}
 	}
 }
 

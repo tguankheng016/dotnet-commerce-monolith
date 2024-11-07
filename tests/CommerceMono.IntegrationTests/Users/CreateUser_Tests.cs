@@ -217,6 +217,18 @@ public class CreateUserValidation_Tests : CreateUserTestBase
 					testUser.RuleFor(u => u.FirstName, f => f.Internet.Password(length: 1000));
 					break;
 				}
+			case 5:
+				{
+					// Invalid Id
+					testUser.RuleFor(u => u.Id, 1);
+					break;
+				}
+			case 6:
+				{
+					// Invalid Id
+					testUser.RuleFor(u => u.Id, -5);
+					break;
+				}
 		}
 
 		return testUser.Generate();
@@ -250,6 +262,16 @@ public class CreateUserValidation_Tests : CreateUserTestBase
 			{
 				GetCreateUserRequest(4),
 				$"The first name length cannot exceed {User.MaxFirstNameLength} characters."
+			};
+			yield return new object[]
+			{
+				GetCreateUserRequest(5),
+				"Invalid user id"
+			};
+			yield return new object[]
+			{
+				GetCreateUserRequest(6),
+				"Invalid user id"
 			};
 		}
 

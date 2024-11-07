@@ -4,6 +4,7 @@ using CommerceMono.Modules.Core.CQRS;
 using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Web;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -50,6 +51,15 @@ public record GetUserByIdResult(CreateOrEditUserDto User);
 
 // Query
 public record GetUserByIdQuery(long Id) : IQuery<GetUserByIdResult>;
+
+// Validator
+public class GetUserByIdQueryValidator : AbstractValidator<GetUserByIdQuery>
+{
+	public GetUserByIdQueryValidator()
+	{
+		RuleFor(x => x.Id).GreaterThanOrEqualTo(0).WithMessage("Invalid user id");
+	}
+}
 
 // Handler
 internal class GetUserByIdHandler(

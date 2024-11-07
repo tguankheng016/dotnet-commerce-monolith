@@ -1,5 +1,3 @@
-using CommerceMono.Application.Roles.Constants;
-using CommerceMono.Application.Roles.Models;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.Application.Users.Dtos;
 using CommerceMono.Application.Users.Models;
@@ -63,6 +61,8 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserCommand>
 {
 	public UpdateUserValidator()
 	{
+		RuleFor(x => x.Id).NotEmpty().WithMessage("Invalid user id");
+		RuleFor(x => x.Id).GreaterThan(0).WithMessage("Invalid user id");
 		RuleFor(x => x).Custom((x, context) =>
 		{
 			if (!string.IsNullOrEmpty(x.Password) && !string.IsNullOrEmpty(x.ConfirmPassword) && x.Password != x.ConfirmPassword)

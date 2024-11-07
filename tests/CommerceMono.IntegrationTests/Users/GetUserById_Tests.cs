@@ -48,17 +48,19 @@ public class GetUserById_Tests : GetUserByIdTestBase
 		userResult.User.UserName.Should().Be(userName);
 	}
 
-	[Fact]
-	public async Task Should_Get_User_NotFound_By_Invalid_Id_Test()
+	[Theory]
+	[InlineData(-3)]
+	[InlineData(100)]
+	public async Task Should_Get_User_Error_By_Invalid_Id_Test(long userId)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
-		var response = await client.GetAsync($"{Endpoint}/100");
+		var response = await client.GetAsync($"{Endpoint}/{userId}");
 
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(userId > 0 ? HttpStatusCode.NotFound : HttpStatusCode.BadRequest);
 	}
 
 	[Fact]

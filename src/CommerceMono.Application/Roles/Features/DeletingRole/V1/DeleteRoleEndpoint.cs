@@ -6,6 +6,7 @@ using CommerceMono.Modules.Core.EFCore;
 using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Web;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -50,6 +51,15 @@ public record DeleteRoleResult();
 
 // Command
 public record DeleteRoleCommand(long Id) : ICommand<DeleteRoleResult>, ITransactional;
+
+// Validator
+public class DeleteRoleValidator : AbstractValidator<DeleteRoleCommand>
+{
+	public DeleteRoleValidator()
+	{
+		RuleFor(x => x.Id).GreaterThan(0).WithMessage("Invalid role id");
+	}
+}
 
 // Handler
 internal class DeleteRoleHandler(

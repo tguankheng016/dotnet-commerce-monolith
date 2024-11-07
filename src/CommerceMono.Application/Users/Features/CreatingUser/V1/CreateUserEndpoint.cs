@@ -61,6 +61,7 @@ public class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
 	public CreateUserValidator()
 	{
+		RuleFor(x => x.Id).Must(x => x is null || x == 0).WithMessage("Invalid user id");
 		RuleFor(x => x.Password).NotEmpty().WithMessage("Please enter the password");
 		RuleFor(x => x.ConfirmPassword).NotEmpty().WithMessage("Please enter the confirmation password");
 

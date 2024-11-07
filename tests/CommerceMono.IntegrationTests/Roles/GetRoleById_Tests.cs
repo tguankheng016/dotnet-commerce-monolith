@@ -48,17 +48,19 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 		roleResult.Role.Name.Should().Be(roleName);
 	}
 
-	[Fact]
-	public async Task Should_Get_Role_NotFound_By_Invalid_Id_Test()
+	[Theory]
+	[InlineData(100)]
+	[InlineData(-3)]
+	public async Task Should_Get_Role_Error_By_Invalid_RoleId_Test(long roleId)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act	
-		var response = await client.GetAsync($"{Endpoint}/100");
+		var response = await client.GetAsync($"{Endpoint}/{roleId}");
 
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(roleId > 0 ? HttpStatusCode.NotFound : HttpStatusCode.BadRequest);
 	}
 
 	[Fact]

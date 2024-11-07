@@ -5,6 +5,7 @@ using CommerceMono.Modules.Core.CQRS;
 using CommerceMono.Modules.Core.Exceptions;
 using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Web;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -51,6 +52,15 @@ public record GetRoleByIdResult(CreateOrEditRoleDto Role);
 
 // Query
 public record GetRoleByIdQuery(long Id) : IQuery<GetRoleByIdResult>;
+
+// Validator
+public class GetRoleByIdQueryValidator : AbstractValidator<GetRoleByIdQuery>
+{
+	public GetRoleByIdQueryValidator()
+	{
+		RuleFor(x => x.Id).GreaterThanOrEqualTo(0).WithMessage("Invalid role id");
+	}
+}
 
 // Handler
 internal class GetRoleByIdHandler(

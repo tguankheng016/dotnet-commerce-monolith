@@ -55,15 +55,15 @@ public class CreateRole_Tests : CreateRoleTestBase
 	}
 
 	[Theory]
-	[InlineData("")]
-	[InlineData(null)]
-	public async Task Should_Create_Role_With_Invalid_Name_Test(string roleName)
+	[ClassData(typeof(CreateRoleErrorByInvalidInputTestData))]
+	public async Task Should_Create_Role_With_Invalid_Input_Test(long? roleId, string? roleName, string errorMessage)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
 		var request = new CreateRoleDto
 		{
-			Name = roleName
+			Id = roleId,
+			Name = roleName!
 		};
 
 		// Act
@@ -74,7 +74,7 @@ public class CreateRole_Tests : CreateRoleTestBase
 
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();
-		failureResponse!.Detail.Should().Be("Please enter the name");
+		failureResponse!.Detail.Should().Be(errorMessage);
 	}
 
 	[Fact]
@@ -95,5 +95,15 @@ public class CreateRole_Tests : CreateRoleTestBase
 
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();
+	}
+
+	public class CreateRoleErrorByInvalidInputTestData : TheoryData<long?, string?, string>
+	{
+		public CreateRoleErrorByInvalidInputTestData()
+		{
+			Add(null, "", "Please enter the name");
+			Add(null, null, "Please enter the name");
+			Add(1, "TestRole", "Invalid role id");
+		}
 	}
 }

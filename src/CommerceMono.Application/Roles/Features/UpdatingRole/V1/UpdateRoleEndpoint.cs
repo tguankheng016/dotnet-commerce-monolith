@@ -63,7 +63,8 @@ public class UpdateRoleValidator : AbstractValidator<UpdateRoleCommand>
 {
 	public UpdateRoleValidator()
 	{
-		RuleFor(x => x.Id).NotEmpty().WithMessage("Role not found");
+		RuleFor(x => x.Id).NotEmpty().WithMessage("Invalid role id");
+		RuleFor(x => x.Id).GreaterThan(0).WithMessage("Invalid role id");
 		RuleFor(x => x.Name).NotEmpty().WithMessage("Please enter the name");
 	}
 }

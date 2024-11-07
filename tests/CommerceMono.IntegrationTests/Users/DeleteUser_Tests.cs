@@ -109,17 +109,19 @@ public class DeleteUser_Tests : DeleteUserTestBase
 		failureResponse?.Detail.Should().Be("You cannot delete admin account!");
 	}
 
-	[Fact]
-	public async Task Should_Delete_User_With_NotFound_Test()
+	[Theory]
+	[InlineData(0)]
+	[InlineData(100)]
+	public async Task Should_Delete_User_With_Invalid_UserId_Test(long userId)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
 
 		// Act
-		var response = await client.DeleteAsync($"{Endpoint}/100");
+		var response = await client.DeleteAsync($"{Endpoint}/{userId}");
 
 		// Assert
-		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		response.StatusCode.Should().Be(userId > 0 ? HttpStatusCode.NotFound : HttpStatusCode.BadRequest);
 
 		var failureResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		failureResponse.Should().NotBeNull();
