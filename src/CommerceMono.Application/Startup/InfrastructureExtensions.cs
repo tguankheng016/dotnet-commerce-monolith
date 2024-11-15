@@ -53,7 +53,7 @@ public static class InfrastructureExtensions
 						AutoReplenishment = true,
 						PermitLimit = 100,
 						QueueLimit = 0,
-						Window = TimeSpan.FromMinutes(1)
+						Window = TimeSpan.FromSeconds(15)
 					}));
 		});
 
@@ -61,8 +61,6 @@ public static class InfrastructureExtensions
 		builder.Services.AddMinimalEndpoints(assembly);
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddControllers();
-
-		builder.Services.AddSwaggerGen();
 
 		builder.Services.AddNpgDbContext<AppDbContext>();
 		builder.Services.AddCustomDapper();
