@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 
-namespace CommerceMono.Logging;
+namespace CommerceMono.Modules.Logging;
 
 public static class LogEnrichHelper
 {

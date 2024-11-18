@@ -7,7 +7,7 @@ using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.SpectreConsole;
 
-namespace CommerceMono.Logging;
+namespace CommerceMono.Modules.Logging;
 
 public static class LoggingExtensions
 {

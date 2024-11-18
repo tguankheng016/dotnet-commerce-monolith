@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\CommerceMono.Modules.Logging\CommerceMono.Modules.Logging.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Core\CommerceMono.Modules.Core.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Postgres\CommerceMono.Modules.Postgres.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Web\CommerceMono.Modules.Web.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Dapper\CommerceMono.Modules.Dapper.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Caching\CommerceMono.Modules.Caching.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Security\CommerceMono.Modules.Security.csproj" />
-    <ProjectReference Include="..\CommerceMono.Logging\CommerceMono.Logging.csproj" />
     <ProjectReference Include="..\CommerceMono.Modules.Permissions\CommerceMono.Modules.Permissions.csproj" />
   </ItemGroup>
 

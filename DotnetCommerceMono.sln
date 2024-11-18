@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Modules.Securi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.IntegrationTests", "tests\CommerceMono.IntegrationTests\CommerceMono.IntegrationTests.csproj", "{BC29A3E3-2C7C-49EA-8DF7-17F5FBDD68C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Logging", "src\CommerceMono.Logging\CommerceMono.Logging.csproj", "{6BBDE57B-590F-42A3-9773-CE289C17A7F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Modules.Logging", "src\CommerceMono.Modules.Logging\CommerceMono.Modules.Logging.csproj", "{6BBDE57B-590F-42A3-9773-CE289C17A7F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceMono.Modules.Permissions", "src\CommerceMono.Modules.Permissions\CommerceMono.Modules.Permissions.csproj", "{FA357792-31EC-4EC0-AFAA-9B8EAD708A30}"
 EndProject
