@@ -5,6 +5,7 @@ using CommerceMono.Application.Users.Models;
 using CommerceMono.Modules.Core.Domain;
 using CommerceMono.Modules.Core.EFCore;
 using CommerceMono.Modules.Core.Persistences;
+using CommerceMono.Modules.Core.Sessions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,10 +18,12 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 {
 	private readonly ILogger<AppDbContext>? _logger;
 	private IDbContextTransaction? _currentTransaction;
+	private readonly IAppSession? _appSession;
 
-	public AppDbContext(DbContextOptions<AppDbContext> options, ILogger<AppDbContext>? logger = null) : base(options)
+	public AppDbContext(DbContextOptions<AppDbContext> options, ILogger<AppDbContext>? logger = null, IAppSession? appSession = null) : base(options)
 	{
 		_logger = logger;
+		_appSession = appSession;
 	}
 
 	public DbSet<UserRolePermission> UserRolePermissions => Set<UserRolePermission>();
@@ -129,6 +132,8 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 
 	private void OnBeforeSaving()
 	{
+		var userId = _appSession?.UserId ?? null;
+
 		var entries = ChangeTracker.Entries();
 
 		foreach (var entry in entries)
@@ -138,11 +143,11 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 				switch (entry.State)
 				{
 					case EntityState.Added:
-						//auditable.CreatorUserId = userId;
+						auditable.CreatorUserId = userId;
 						auditable.CreationTime = DateTimeOffset.Now;
 						break;
 					case EntityState.Modified:
-						//auditable.LastModifierUserId = userId;
+						auditable.LastModifierUserId = userId;
 						auditable.LastModificationTime = DateTimeOffset.Now;
 						break;
 				}
@@ -154,7 +159,7 @@ public class AppDbContext : IdentityDbContext<User, Role, long,
 				{
 					case EntityState.Deleted:
 						entry.State = EntityState.Modified;
-						//softDeletable.DeleterUserId = userId;
+						softDeletable.DeleterUserId = userId;
 						softDeletable.IsDeleted = true;
 						softDeletable.DeletionTime = DateTimeOffset.Now;
 						break;
