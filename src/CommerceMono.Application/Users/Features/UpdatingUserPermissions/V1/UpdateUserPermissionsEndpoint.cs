@@ -69,12 +69,13 @@ public class UpdateUserPermissionsValidator : AbstractValidator<UpdateUserPermis
 internal class UpdateUserPermissionsHandler(
 	UserManager<User> userManager,
 	IUserRolePermissionManager userRolePermissionManager,
-	AppDbContext appDbContext,
-	IPermissionManager permissionManager
+	AppDbContext appDbContext
 ) : ICommandHandler<UpdateUserPermissionsCommand, UpdateUserPermissionsResult>
 {
 	public async Task<UpdateUserPermissionsResult> Handle(UpdateUserPermissionsCommand command, CancellationToken cancellationToken)
 	{
+		userRolePermissionManager.ValidatePermissions(command.GrantedPermissionNames!);
+
 		var user = await userManager.FindByIdAsync(command.UserId.ToString());
 
 		if (user is null)
@@ -82,7 +83,12 @@ internal class UpdateUserPermissionsHandler(
 			throw new NotFoundException("User not found");
 		}
 
-		userRolePermissionManager.ValidatePermissions(command.GrantedPermissionNames!);
+		var roleIds = await appDbContext.UserRoles.AsNoTracking()
+			.Where(x => x.UserId == user.Id)
+			.Select(x => x.RoleId)
+			.ToListAsync(cancellationToken);
+
+		var userRolesPermissions = await GetUserRolesPermissionsAsync(roleIds, cancellationToken);
 
 		var oldPermissions = await userRolePermissionManager.SetUserPermissionAsync(user.Id, cancellationToken);
 		var newPermissions = command.GrantedPermissionNames!.ToArray();
@@ -99,8 +105,8 @@ internal class UpdateUserPermissionsHandler(
 				await appDbContext.SaveChangesAsync(cancellationToken);
 			}
 
-			// Check role got or granted or not
-			if (!await permissionManager.IsGrantedAsync(user.Id, permission.Key, cancellationToken))
+			// Skip if role dont have the permission
+			if (!userRolesPermissions.ContainsKey(permission.Key))
 			{
 				continue;
 			}
@@ -108,7 +114,6 @@ internal class UpdateUserPermissionsHandler(
 			// Prohibit at user level if role is granted
 			await appDbContext.UserRolePermissions.AddAsync(new UserRolePermission()
 			{
-				Id = 0,
 				UserId = user.Id,
 				Name = permission.Key,
 				IsGranted = false
@@ -127,9 +132,8 @@ internal class UpdateUserPermissionsHandler(
 				appDbContext.UserRolePermissions.Remove(userFalseGrantedPermission);
 			}
 
-			// Check role got or granted or not
 			// Skip if role already have that permission
-			if (await permissionManager.IsGrantedAsync(user.Id, permission, cancellationToken))
+			if (userRolesPermissions.ContainsKey(permission))
 			{
 				continue;
 			}
@@ -137,7 +141,6 @@ internal class UpdateUserPermissionsHandler(
 			// Added at user level if role is not granted
 			await appDbContext.UserRolePermissions.AddAsync(new UserRolePermission()
 			{
-				Id = 0,
 				UserId = user.Id,
 				Name = permission,
 				IsGranted = true
@@ -148,6 +151,34 @@ internal class UpdateUserPermissionsHandler(
 		await userRolePermissionManager.SetUserPermissionAsync(user.Id, cancellationToken);
 
 		return new UpdateUserPermissionsResult();
+	}
+
+	public async Task<Dictionary<string, string>> GetUserRolesPermissionsAsync(List<long>? roleIds, CancellationToken cancellationToken)
+	{
+		var permissions = new Dictionary<string, string>();
+
+		if (roleIds == null || roleIds.Count == 0)
+		{
+			return permissions;
+		}
+
+		foreach (var roleId in roleIds)
+		{
+			var rolePermissions = await userRolePermissionManager.SetRolePermissionAsync(roleId, cancellationToken);
+
+			if (rolePermissions is not null)
+			{
+				foreach (var rolePermission in rolePermissions)
+				{
+					if (!permissions.ContainsKey(rolePermission.Key))
+					{
+						permissions.Add(rolePermission.Key, rolePermission.Value);
+					}
+				}
+			}
+		}
+
+		return permissions;
 	}
 }
 
