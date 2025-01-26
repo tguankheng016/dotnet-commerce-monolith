@@ -19,7 +19,7 @@ public static class JwtExtensions
 		services.AddScoped<AccessSecurityTokenHandler>();
 		services.AddScoped<ITokenKeyValidator, TokenKeyValidator>();
 		services.AddScoped<ITokenSecurityStampValidator, TokenSecurityStampValidator>();
-		//services.AddScoped<IRefreshSecurityTokenHandler, RefreshSecurityTokenHandler>();
+		services.AddScoped<IRefreshSecurityTokenHandler, RefreshSecurityTokenHandler>();
 
 		return services;
 	}
@@ -96,7 +96,7 @@ public static class JwtExtensions
 			if (ctx.User.Identity?.IsAuthenticated != true)
 			{
 				var endpoint = ctx.GetEndpoint();
-				if (endpoint != null)
+				if (endpoint is not null)
 				{
 					var metadata = endpoint.Metadata;
 
@@ -106,7 +106,7 @@ public static class JwtExtensions
 					try
 					{
 						var result = await ctx.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-						if (result.Succeeded && result.Principal != null)
+						if (result.Succeeded && result.Principal is not null)
 						{
 							ctx.User = result.Principal;
 						}

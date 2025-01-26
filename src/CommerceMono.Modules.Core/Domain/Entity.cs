@@ -6,7 +6,7 @@ public abstract class Entity : Entity<int>
 
 public abstract class Entity<TPrimaryKey> : IEntity<TPrimaryKey>
 {
-	public virtual required TPrimaryKey Id { get; set; }
+	public virtual TPrimaryKey Id { get; set; } = default!;
 
 	public virtual long Version { get; set; }
 }

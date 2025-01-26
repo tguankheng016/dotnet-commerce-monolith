@@ -5,7 +5,7 @@ using CommerceMono.Application.Data.Seed;
 using CommerceMono.Application.Identities.Services;
 using CommerceMono.Application.Roles.Models;
 using CommerceMono.Application.Users.Models;
-using CommerceMono.Logging;
+using CommerceMono.Modules.Logging;
 using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Core.Dependencies;
 using CommerceMono.Modules.Core.EFCore;
@@ -53,7 +53,7 @@ public static class InfrastructureExtensions
 						AutoReplenishment = true,
 						PermitLimit = 100,
 						QueueLimit = 0,
-						Window = TimeSpan.FromMinutes(1)
+						Window = TimeSpan.FromSeconds(15)
 					}));
 		});
 
@@ -61,8 +61,6 @@ public static class InfrastructureExtensions
 		builder.Services.AddMinimalEndpoints(assembly);
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddControllers();
-
-		builder.Services.AddSwaggerGen();
 
 		builder.Services.AddNpgDbContext<AppDbContext>();
 		builder.Services.AddCustomDapper();
@@ -82,6 +80,7 @@ public static class InfrastructureExtensions
 
 		builder.Services.AddIdentity<User, Role>(config =>
 			{
+				config.User.RequireUniqueEmail = true;
 				config.Password.RequiredLength = 6;
 				config.Password.RequireDigit = false;
 				config.Password.RequireNonAlphanumeric = false;

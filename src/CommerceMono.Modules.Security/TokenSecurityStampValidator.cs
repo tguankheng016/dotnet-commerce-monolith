@@ -20,21 +20,21 @@ public class TokenSecurityStampValidator : ITokenSecurityStampValidator
 
 	public async Task<bool> ValidateAsync(ClaimsPrincipal claimsPrincipal)
 	{
-		if (claimsPrincipal?.Claims == null || !claimsPrincipal.Claims.Any())
+		if (claimsPrincipal?.Claims is null || !claimsPrincipal.Claims.Any())
 		{
 			return false;
 		}
 
 		var securityStampKey = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == TokenConsts.SecurityStampKey);
 
-		if (securityStampKey == null)
+		if (securityStampKey is null)
 		{
 			return false;
 		}
 
 		var sub = claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
 
-		if (sub == null)
+		if (sub is null)
 		{
 			return false;
 		}
@@ -54,7 +54,7 @@ public class TokenSecurityStampValidator : ITokenSecurityStampValidator
 	{
 		var securityStampKey = await _cacheProvider.GetAsync<string>(GenerateCacheKey(userId));
 
-		return securityStampKey != null && securityStampKey.Value == securityStamp;
+		return securityStampKey is not null && securityStampKey.Value == securityStamp;
 	}
 
 	private string GenerateCacheKey(string userId) => SecurityStampCacheItem.GenerateCacheKey(userId);

@@ -1,4 +1,4 @@
-namespace CommerceMono.Logging;
+namespace CommerceMono.Modules.Logging;
 
 public class FileOptions
 {

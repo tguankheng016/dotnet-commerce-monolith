@@ -7,7 +7,7 @@ using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.SpectreConsole;
 
-namespace CommerceMono.Logging;
+namespace CommerceMono.Modules.Logging;
 
 public static class LoggingExtensions
 {
@@ -18,7 +18,7 @@ public static class LoggingExtensions
 			var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 			var logOptions = context.Configuration.GetSection(nameof(LogOptions)).Get<LogOptions>();
 
-			if (logOptions == null)
+			if (logOptions is null)
 			{
 				return;
 			}

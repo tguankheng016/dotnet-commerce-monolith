@@ -3,8 +3,6 @@ using CommerceMono.Modules.Caching;
 using CommerceMono.Modules.Permissions;
 using CommerceMono.Modules.Permissions.Caching;
 using EasyCaching.Core;
-using FluentAssertions;
-using NSubstitute;
 
 namespace CommerceMono.UnitTests.Permissions;
 

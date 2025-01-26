@@ -27,7 +27,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 		_cacheProvider = cacheManager.GetCachingProvider();
 	}
 
-	public async Task<string> CreateAccessToken(ClaimsIdentity identity, User user, string refreshTokenKey, TimeSpan? expiration = null)
+	public async Task<string> CreateAccessToken(ClaimsIdentity identity, User user, string? refreshTokenKey = null, TimeSpan? expiration = null)
 	{
 		var claims = await CreateJwtClaims(identity, user, refreshTokenKey: refreshTokenKey);
 		return CreateToken(claims, expiration ?? _tokenAuthConfiguration.AccessTokenExpiration);
@@ -50,7 +50,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 			claims: claims,
 			notBefore: now,
 			signingCredentials: _tokenAuthConfiguration.SigningCredentials,
-			expires: expiration == null ? null : now.Add(expiration.Value)
+			expires: expiration is null ? null : now.Add(expiration.Value)
 		);
 
 		return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
@@ -117,7 +117,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
 public interface IJwtTokenGenerator : IScopedDependency
 {
-	Task<string> CreateAccessToken(ClaimsIdentity identity, User user, string refreshTokenKey, TimeSpan? expiration = null);
+	Task<string> CreateAccessToken(ClaimsIdentity identity, User user, string? refreshTokenKey = null, TimeSpan? expiration = null);
 
 	Task<(string Token, string Key)> CreateRefreshToken(ClaimsIdentity identity, User user, TimeSpan? expiration = null);
 }

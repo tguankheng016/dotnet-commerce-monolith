@@ -1,18 +1,21 @@
-
 using Asp.Versioning.Builder;
 using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace CommerceMono.Application.Identities.Features.Authenticating;
+namespace CommerceMono.Application.Roles;
 
-public static class AuthenticateVersionSets
+public class RoleConfigs
+{
+	public const string ApiVersionSet = "Role";
+}
+
+public static class RoleApiVersionSets
 {
 	public static ApiVersionSet GetApiVersionSet(this IEndpointRouteBuilder builder)
 	{
-		return builder.NewApiVersionSet("Authenticate")
-			.HasDeprecatedApiVersion(1.0)
-			.HasApiVersion(2.0)
+		return builder.NewApiVersionSet(RoleConfigs.ApiVersionSet)
+			.HasApiVersion(1.0)
 			.Build();
 	}
 }

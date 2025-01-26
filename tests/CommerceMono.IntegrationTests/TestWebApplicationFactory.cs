@@ -4,26 +4,42 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 using Testcontainers.PostgreSql;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests;
 
-public class TestWebApplicationFactory : WebApplicationFactory<IApplicationRoot>, IAsyncLifetime
+public class TestWebApplicationFactory : WebApplicationFactory<IApplicationRoot>
 {
-	private readonly PostgreSqlContainer _databaseContainer = new PostgreSqlBuilder()
-		.WithUsername("workshop")
-		.WithPassword("password")
-		.WithDatabase("mydb")
-		.Build();
+	private readonly ITestOutputHelper _testOutputHelper;
+	private readonly TestContainers _testContainers;
 
-	public async Task InitializeAsync()
+	public TestWebApplicationFactory(ITestOutputHelper testOutputHelper, TestContainers testContainers)
 	{
-		await _databaseContainer.StartAsync();
+		_testOutputHelper = testOutputHelper;
+		_testContainers = testContainers;
 	}
 
-	public new async Task DisposeAsync()
+	protected override IHost CreateHost(IHostBuilder builder)
 	{
-		await _databaseContainer.StopAsync();
+		builder.UseSerilog(
+			(ctx, loggerConfiguration) =>
+			{
+				if (_testOutputHelper is not null)
+				{
+					loggerConfiguration.WriteTo.TestOutput(
+						_testOutputHelper,
+						LogEventLevel.Error,
+						"{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level} - {Message:lj}{NewLine}{Exception}"
+					);
+				}
+			}
+		);
+
+		return base.CreateHost(builder);
 	}
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -39,7 +55,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<IApplicationRoot>
 
 				var newPostgresOptions = new PostgresOptions()
 				{
-					ConnectionString = _databaseContainer.GetConnectionString()
+					ConnectionString = _testContainers.DatabaseContainer.GetConnectionString()
 				};
 
 				services.AddSingleton(newPostgresOptions);

@@ -1,4 +1,4 @@
-using CommerceMono.Logging;
+using CommerceMono.Modules.Logging;
 using CommerceMono.Modules.Core.EFCore;
 using CommerceMono.Modules.Core.Validations;
 using MediatR;

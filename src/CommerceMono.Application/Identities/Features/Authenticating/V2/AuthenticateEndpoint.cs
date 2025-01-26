@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Asp.Versioning.Conventions;
 using CommerceMono.Application.Identities.Services;
 using CommerceMono.Application.Users.Models;
 using CommerceMono.Modules.Core.CQRS;
@@ -28,7 +27,7 @@ public class AuthenticateEndpoint : IMinimalEndpoint
 			.WithSummary("Authenticate")
 			.WithDescription("Authenticate")
 			.WithOpenApi()
-			.HasApiVersion(2.0);
+			.HasLatestApiVersion(fromApiVersion: SupportedApiVersions.V2);
 
 		return builder;
 	}
@@ -87,7 +86,7 @@ internal class AuthenticateHandler(
 		var identityUser = await userManager.FindByNameAsync(command.UsernameOrEmailAddress!)
 			?? await userManager.FindByEmailAsync(command.UsernameOrEmailAddress!);
 
-		if (identityUser == null)
+		if (identityUser is null)
 		{
 			throw new BadRequestException($"Invalid username or password!");
 		}

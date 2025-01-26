@@ -54,7 +54,7 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 
 		var user = await _userManager.FindByIdAsync(userId.ToString());
 
-		if (user == null)
+		if (user is null)
 		{
 			throw new BadRequestException("User not found");
 		}
@@ -64,7 +64,7 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 
 		var roleIds = new List<long>();
 
-		if (userRolesCaches == null || !userRolesCaches.HasValue)
+		if (userRolesCaches is null || !userRolesCaches.HasValue)
 		{
 			var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -72,7 +72,7 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 			{
 				var role = await _roleManager.FindByNameAsync(userRole);
 
-				if (role != null)
+				if (role is not null)
 				{
 					roleIds.Add(role.Id);
 				}
@@ -128,7 +128,7 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 	{
 		var role = await _roleManager.FindByIdAsync(roleId.ToString());
 
-		if (role == null)
+		if (role is null)
 		{
 			throw new BadRequestException("Role not found");
 		}
@@ -180,6 +180,11 @@ public class UserRolePermissionManager : IUserRolePermissionManager
 			return grantedPermissions;
 		}
 	}
+
+	public async Task RemoveUserRoleCacheAsync(long userId, CancellationToken cancellationToken = default)
+	{
+		await _cacheProvider.RemoveAsync(UserRoleCacheItem.GenerateCacheKey(userId), cancellationToken);
+	}
 }
 
 
@@ -190,4 +195,6 @@ public interface IUserRolePermissionManager : IScopedDependency
 	Task<Dictionary<string, string>> SetUserPermissionAsync(long userId, CancellationToken cancellationToken = default);
 
 	Task<Dictionary<string, string>> SetRolePermissionAsync(long role, CancellationToken cancellationToken = default);
+
+	Task RemoveUserRoleCacheAsync(long userId, CancellationToken cancellationToken = default);
 }

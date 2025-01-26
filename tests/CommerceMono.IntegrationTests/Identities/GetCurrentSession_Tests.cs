@@ -1,21 +1,20 @@
-
-using System.Net;
-using System.Net.Http.Json;
 using CommerceMono.Application.Identities.Features.GettingCurrentSession.V1;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.IntegrationTests.Utilities;
-using FluentAssertions;
+using CommerceMono.Modules.Permissions;
+using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
-public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
+public class GetCurrentSession_Tests : AppTestBase
 {
-	private readonly TestWebApplicationFactory _apiFactory;
-	private readonly string _endpoint = "api/v1/identities/current-session";
+	protected override string EndpointName { get; } = "identities/current-session";
 
-	public GetCurrentSession_Tests(TestWebApplicationFactory apiFactory)
+	public GetCurrentSession_Tests(
+		ITestOutputHelper testOutputHelper,
+		TestContainers testContainers
+	) : base(testOutputHelper, testContainers)
 	{
-		_apiFactory = apiFactory;
 	}
 
 	[Theory]
@@ -27,17 +26,17 @@ public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
 		// Arrange
 		HttpClient? client;
 
-		if (username != null)
+		if (username is not null)
 		{
-			client = await _apiFactory.LoginAs(username);
+			client = await ApiFactory.LoginAs(username);
 		}
 		else
 		{
-			client = _apiFactory.CreateClient();
+			client = Client;
 		}
 
 		// Act
-		var response = await client.GetAsync(_endpoint);
+		var response = await client.GetAsync(Endpoint);
 
 		// Assert
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -45,7 +44,7 @@ public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
 		var currentSession = await response.Content.ReadFromJsonAsync<GetCurrentSessionResult>();
 		currentSession.Should().NotBeNull();
 
-		if (username == null)
+		if (username is null)
 		{
 			currentSession!.User.Should().BeNull();
 		}
@@ -53,6 +52,15 @@ public class GetCurrentSession_Tests : IClassFixture<TestWebApplicationFactory>
 		{
 			currentSession!.User.Should().NotBeNull();
 			currentSession!.User!.UserName.Should().Be(username);
+
+			var allPermissions = AppPermissionProvider.GetPermissions();
+
+			currentSession.AllPermissions.Count().Should().Be(allPermissions.Count());
+
+			if (currentSession.User.UserName == UserConsts.DefaultUsername.Admin)
+			{
+				currentSession.GrantedPermissions.Count().Should().Be(allPermissions.Count());
+			}
 		}
 	}
 }

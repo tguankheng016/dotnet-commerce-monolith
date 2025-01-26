@@ -32,7 +32,7 @@ public class PermissionManager : IPermissionManager
 		var userRoles = await _cacheProvider
 			.GetAsync<UserRoleCacheItem>(UserRoleCacheItem.GenerateCacheKey(userId), cancellationToken);
 
-		if (userRoles == null || !userRoles.HasValue)
+		if (userRoles is null || !userRoles.HasValue)
 		{
 			return await GetGrantedPermissionsFromDbAsync(userId);
 		}
@@ -40,7 +40,7 @@ public class PermissionManager : IPermissionManager
 		var userPermissions = await _cacheProvider
 			.GetAsync<UserPermissionCacheItem>(UserPermissionCacheItem.GenerateCacheKey(userId), cancellationToken);
 
-		if (userPermissions != null && userPermissions.HasValue)
+		if (userPermissions is not null && userPermissions.HasValue)
 		{
 			foreach (var kvp in userPermissions.Value.Permissions)
 			{
@@ -55,7 +55,7 @@ public class PermissionManager : IPermissionManager
 			var rolePermissions = await _cacheProvider
 				.GetAsync<RolePermissionCacheItem>(RolePermissionCacheItem.GenerateCacheKey(roleId), cancellationToken);
 
-			if (rolePermissions == null || !rolePermissions.HasValue)
+			if (rolePermissions is null || !rolePermissions.HasValue)
 			{
 				return await GetGrantedPermissionsFromDbAsync(userId);
 			}
