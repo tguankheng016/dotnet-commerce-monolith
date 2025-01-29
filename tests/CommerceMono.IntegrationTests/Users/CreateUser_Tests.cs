@@ -11,14 +11,15 @@ using static Bogus.DataSets.Name;
 
 namespace CommerceMono.IntegrationTests.Users;
 
+[Collection(UserTestCollection1.Name)]
 public class CreateUserTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "user";
 
 	protected CreateUserTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -27,8 +28,8 @@ public class CreateUser_Tests : CreateUserTestBase
 {
 	public CreateUser_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -151,14 +152,14 @@ public class CreateUserValidation_Tests : CreateUserTestBase
 {
 	public CreateUserValidation_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
 	[Theory]
 	[ClassData(typeof(GetValidateUserCreationTestData))]
-	public async Task Should_Create_Role_With_Invalid_Input_Test(CreateUserDto request, string errorMessage)
+	public async Task Should_Create_User_With_Invalid_Input_Test(CreateUserDto request, string errorMessage)
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();

@@ -6,14 +6,15 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
+[Collection(RoleTestCollection1.Name)]
 public class DeleteRoleTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
 	protected DeleteRoleTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -22,8 +23,8 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 {
 	public DeleteRole_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -32,11 +33,7 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 	{
 		// Arrange
 		var client = await ApiFactory.LoginAsAdmin();
-		var newRole = new Role()
-		{
-			Name = "TestRole"
-		};
-
+		var newRole = RoleFaker.GetRoleFaker().Generate();
 		await DbContext.Roles.AddAsync(newRole);
 		await DbContext.SaveChangesAsync();
 
@@ -113,3 +110,4 @@ public class DeleteRole_Tests : DeleteRoleTestBase
 		failureResponse.Should().NotBeNull();
 	}
 }
+

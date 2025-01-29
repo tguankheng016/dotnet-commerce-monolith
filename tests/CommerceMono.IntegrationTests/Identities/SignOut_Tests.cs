@@ -6,19 +6,20 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
+[Collection(IdentityTestCollection1.Name)]
 public class SignOut_Tests : AppTestBase
 {
 	protected override string EndpointName { get; } = "identities/sign-out";
 
 	public SignOut_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
 	[Fact]
-	public async Task Should_SignOut_Success__Tests()
+	public async Task Should_SignOut_Success_Tests()
 	{
 		// Arrange
 		var request = new AuthenticateRequest(UserConsts.DefaultUsername.Admin, "123qwe");
@@ -39,3 +40,4 @@ public class SignOut_Tests : AppTestBase
 		tokenKeyCaches!.Count().Should().Be(0);
 	}
 }
+

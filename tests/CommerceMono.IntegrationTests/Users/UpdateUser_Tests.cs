@@ -1,4 +1,5 @@
 using System.Collections;
+using CommerceMono.Application.Roles.Constants;
 using CommerceMono.Application.Users.Constants;
 using CommerceMono.Application.Users.Dtos;
 using CommerceMono.Application.Users.Features.UpdatingUser.V1;
@@ -12,14 +13,15 @@ using static Bogus.DataSets.Name;
 
 namespace CommerceMono.IntegrationTests.Users;
 
+[Collection(UserTestCollection1.Name)]
 public class UpdateUserTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "user";
 
 	protected UpdateUserTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -28,8 +30,8 @@ public class UpdateUser_Tests : UpdateUserTestBase
 {
 	public UpdateUser_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -37,7 +39,10 @@ public class UpdateUser_Tests : UpdateUserTestBase
 	public async Task Should_Update_User_Test()
 	{
 		// Arrange
-		var userId = 2;
+		var newUser = UserFaker.GetUserFaker().Generate();
+		await DbContext.Users.AddAsync(newUser);
+		await DbContext.SaveChangesAsync();
+		var userId = newUser.Id;
 
 		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
@@ -50,6 +55,7 @@ public class UpdateUser_Tests : UpdateUserTestBase
 			.RuleFor(x => x.Password, f => f.Internet.Password())
 			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
 		var request = testUser.Generate();
+		request.Id = newUser.Id;
 
 		// Act
 		var response = await client.PutAsJsonAsync(Endpoint, request);
@@ -60,7 +66,7 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		var updateResult = await response.Content.ReadFromJsonAsync<UpdateUserResult>();
 		updateResult.Should().NotBeNull();
 		updateResult!.User.Should().NotBeNull();
-		updateResult!.User.Id.Should().Be(2);
+		updateResult!.User.Id.Should().Be(userId);
 		updateResult!.User.UserName.Should().Be(request.UserName);
 		updateResult!.User.FirstName.Should().Be(request.FirstName);
 		updateResult!.User.LastName.Should().Be(request.LastName);
@@ -68,13 +74,38 @@ public class UpdateUser_Tests : UpdateUserTestBase
 
 		var newTotalCount = await DbContext.Users.CountAsync();
 		newTotalCount.Should().Be(totalCount);
+
+		var dbResult = await DbContext.Users
+			.FirstOrDefaultAsync(x => x.Id == request.Id);
+		await DbContext.Entry(dbResult!).ReloadAsync();
+		dbResult.Should().NotBeNull();
+		dbResult!.UserName.Should().Be(request.UserName);
+		dbResult.NormalizedUserName.Should().Be(request.UserName!.ToUpper());
+		dbResult.Email.Should().Be(request.Email);
+		dbResult.NormalizedEmail.Should().Be(request.Email!.ToUpper());
+		dbResult.FirstName.Should().Be(request.FirstName);
+		dbResult.LastName.Should().Be(request.LastName);
 	}
 
 	[Fact]
 	public async Task Should_Update_User_With_Roles_Test()
 	{
 		// Arrange
-		var userId = 2;
+		var newUser = UserFaker.GetUserFaker().Generate();
+		await DbContext.Users.AddAsync(newUser);
+		await DbContext.SaveChangesAsync();
+
+		var userId = newUser.Id;
+		var userRole = await DbContext.Roles.FirstAsync(x => x.Name == RoleConsts.RoleName.User);
+
+		var newUserRole = new UserRole
+		{
+			UserId = newUser.Id,
+			RoleId = userRole.Id
+		};
+
+		await DbContext.UserRoles.AddAsync(newUserRole);
+		await DbContext.SaveChangesAsync();
 
 		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Users.CountAsync();
@@ -86,12 +117,13 @@ public class UpdateUser_Tests : UpdateUserTestBase
 			.RuleFor(x => x.Email, f => f.Internet.Email())
 			.RuleFor(x => x.Password, f => f.Internet.Password())
 			.RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
+
 		var request = testUser.Generate();
 		var updatedRoles = new List<string>();
 		request.Roles = updatedRoles;
 
 		// Prepare the edited user caches
-		HttpClient? userClient = await ApiFactory.LoginAsUser();
+		HttpClient? userClient = await ApiFactory.LoginAs(newUser.UserName!);
 		await userClient.PutAsJsonAsync(Endpoint, request);
 		var userRoleCaches = await CacheProvider.GetAsync<UserRoleCacheItem>(UserRoleCacheItem.GenerateCacheKey(userId));
 		userRoleCaches.Should().NotBeNull();
@@ -106,7 +138,7 @@ public class UpdateUser_Tests : UpdateUserTestBase
 		var updateResult = await response.Content.ReadFromJsonAsync<UpdateUserResult>();
 		updateResult.Should().NotBeNull();
 		updateResult!.User.Should().NotBeNull();
-		updateResult!.User.Id.Should().Be(2);
+		updateResult!.User.Id.Should().Be(userId);
 		updateResult!.User.UserName.Should().Be(request.UserName);
 		updateResult!.User.FirstName.Should().Be(request.FirstName);
 		updateResult!.User.LastName.Should().Be(request.LastName);
@@ -120,6 +152,17 @@ public class UpdateUser_Tests : UpdateUserTestBase
 
 		var newTotalCount = await DbContext.Users.CountAsync();
 		newTotalCount.Should().Be(totalCount);
+
+		var dbResult = await DbContext.Users
+			.FirstOrDefaultAsync(x => x.Id == request.Id);
+		await DbContext.Entry(dbResult!).ReloadAsync();
+		dbResult.Should().NotBeNull();
+		dbResult!.UserName.Should().Be(request.UserName);
+		dbResult.NormalizedUserName.Should().Be(request.UserName!.ToUpper());
+		dbResult.Email.Should().Be(request.Email);
+		dbResult.NormalizedEmail.Should().Be(request.Email!.ToUpper());
+		dbResult.FirstName.Should().Be(request.FirstName);
+		dbResult.LastName.Should().Be(request.LastName);
 	}
 }
 
@@ -127,8 +170,8 @@ public class UpdateUserValidation_Tests : UpdateUserTestBase
 {
 	public UpdateUserValidation_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -307,3 +350,4 @@ public class UpdateUserValidation_Tests : UpdateUserTestBase
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }
+

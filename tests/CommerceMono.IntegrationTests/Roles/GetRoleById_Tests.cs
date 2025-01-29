@@ -6,14 +6,15 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
+[Collection(RoleTestCollection1.Name)]
 public class GetRoleByIdTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
 	protected GetRoleByIdTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -22,8 +23,8 @@ public class GetRoleById_Tests : GetRoleByIdTestBase
 {
 	public GetRoleById_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
