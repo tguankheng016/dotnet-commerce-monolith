@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
+[Collection(IdentityTestCollection1.Name)]
 public class Authenticate_Tests : AppTestBase
 {
 	protected override string EndpointVersion { get; } = "v2";
@@ -14,8 +15,8 @@ public class Authenticate_Tests : AppTestBase
 
 	public Authenticate_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -72,3 +73,4 @@ public class Authenticate_Tests : AppTestBase
 		failureResponse!.Detail.Should().Be(errorMessage);
 	}
 }
+

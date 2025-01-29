@@ -4,18 +4,18 @@ using CommerceMono.Modules.Permissions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
-using static Bogus.DataSets.Name;
 
 namespace CommerceMono.IntegrationTests.Users;
 
+[Collection(UserTestCollection1.Name)]
 public class DeleteUserTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "user";
 
 	protected DeleteUserTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -25,8 +25,8 @@ public class DeleteUser_Tests : DeleteUserTestBase
 {
 	public DeleteUser_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -72,7 +72,6 @@ public class DeleteUser_Tests : DeleteUserTestBase
 
 		await DbContext.UserRolePermissions.AddAsync(new UserRolePermission()
 		{
-			Id = 0,
 			UserId = newUser.Id,
 			Name = UserPermissions.Pages_Administration_Users_Delete,
 			IsGranted = true
@@ -149,16 +148,7 @@ public class DeleteUser_Tests : DeleteUserTestBase
 
 	private User GetTestUser()
 	{
-		var testUser = new Faker<User>()
-			.RuleFor(x => x.Id, 0)
-			.RuleFor(u => u.FirstName, (f) => f.Name.FirstName(Gender.Male))
-			.RuleFor(u => u.LastName, (f) => f.Name.LastName(Gender.Female))
-			.RuleFor(x => x.UserName, f => f.Internet.UserName())
-			.RuleFor(x => x.NormalizedUserName, (f, u) => u.UserName!.ToUpper())
-			.RuleFor(x => x.Email, f => f.Internet.Email())
-			.RuleFor(x => x.NormalizedEmail, (f, u) => u.Email!.ToUpper())
-			.RuleFor(x => x.SecurityStamp, Guid.NewGuid().ToString());
-
-		return testUser.Generate();
+		return UserFaker.GetUserFaker().Generate();
 	}
 }
+

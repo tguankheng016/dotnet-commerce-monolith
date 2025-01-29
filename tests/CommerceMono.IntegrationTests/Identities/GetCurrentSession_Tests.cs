@@ -6,14 +6,15 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
+[Collection(IdentityTestCollection1.Name)]
 public class GetCurrentSession_Tests : AppTestBase
 {
 	protected override string EndpointName { get; } = "identities/current-session";
 
 	public GetCurrentSession_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -64,3 +65,4 @@ public class GetCurrentSession_Tests : AppTestBase
 		}
 	}
 }
+

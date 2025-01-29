@@ -10,14 +10,15 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Users;
 
+[Collection(UserTestCollection1.Name)]
 public class GetUsersTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "users";
 
 	protected GetUsersTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -26,8 +27,8 @@ public class GetUsers_Tests : GetUsersTestBase
 {
 	public GetUsers_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 

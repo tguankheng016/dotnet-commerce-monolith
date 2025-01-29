@@ -10,14 +10,15 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Roles;
 
+[Collection(RoleTestCollection1.Name)]
 public class UpdateRoleTestBase : AppTestBase
 {
 	protected override string EndpointName { get; } = "role";
 
 	protected UpdateRoleTestBase(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 }
@@ -26,8 +27,8 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 {
 	public UpdateRole_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -35,12 +36,16 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 	public async Task Should_Update_Role_Test()
 	{
 		// Arrange
+		var newRole = RoleFaker.GetRoleFaker().Generate();
+		await DbContext.Roles.AddAsync(newRole);
+		await DbContext.SaveChangesAsync();
+
 		var client = await ApiFactory.LoginAsAdmin();
 		var totalCount = await DbContext.Roles.CountAsync();
 		var request = new EditRoleDto
 		{
-			Id = 2,
-			Name = RoleConsts.RoleName.User,
+			Id = newRole.Id,
+			Name = "Edited" + newRole.Name,
 			IsDefault = false
 		};
 
@@ -53,11 +58,20 @@ public class UpdateRole_Tests : UpdateRoleTestBase
 		var updateResult = await response.Content.ReadFromJsonAsync<UpdateRoleResult>();
 		updateResult.Should().NotBeNull();
 		updateResult!.Role.Should().NotBeNull();
+		updateResult!.Role.Name.Should().Be(request.Name);
 		updateResult!.Role.IsDefault.Should().BeFalse();
-		updateResult!.Role.Id.Should().Be(2);
+		updateResult!.Role.Id.Should().Be(newRole.Id);
 
 		var newTotalCount = await DbContext.Roles.CountAsync();
 		newTotalCount.Should().Be(totalCount);
+
+		var dbResult = await DbContext.Roles
+			.FirstOrDefaultAsync(x => x.Id == request.Id);
+		await DbContext.Entry(dbResult!).ReloadAsync();
+		dbResult.Should().NotBeNull();
+		dbResult!.Name.Should().Be(request.Name);
+		dbResult.NormalizedName.Should().Be(request.Name.ToUpper());
+		dbResult.IsDefault.Should().Be(request.IsDefault);
 	}
 
 	[Theory]
@@ -138,8 +152,8 @@ public class UpdateRolePermissions_Tests : UpdateRoleTestBase
 {
 	public UpdateRolePermissions_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -250,3 +264,4 @@ public class UpdateRolePermissions_Tests : UpdateRoleTestBase
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }
+

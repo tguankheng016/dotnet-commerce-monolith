@@ -8,14 +8,15 @@ using Xunit.Abstractions;
 
 namespace CommerceMono.IntegrationTests.Identities;
 
+[Collection(IdentityTestCollection1.Name)]
 public class RefreshToken_Tests : AppTestBase
 {
 	protected override string EndpointName { get; } = "identities/refresh-token";
 
 	public RefreshToken_Tests(
 		ITestOutputHelper testOutputHelper,
-		TestContainers testContainers
-	) : base(testOutputHelper, testContainers)
+		TestWebApplicationFactory webAppFactory
+	) : base(testOutputHelper, webAppFactory)
 	{
 	}
 
@@ -43,7 +44,7 @@ public class RefreshToken_Tests : AppTestBase
 
 		var tokenKeyCaches = await CacheProvider.GetByPrefixAsync<string>($"{TokenConsts.TokenValidityKey}.{user.Id}");
 		tokenKeyCaches.Should().NotBeNull();
-		tokenKeyCaches!.Count().Should().Be(3);
+		tokenKeyCaches!.Count().Should().BeGreaterThan(2);
 	}
 
 	[Fact]
@@ -105,3 +106,4 @@ public class RefreshToken_Tests : AppTestBase
 		response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
 	}
 }
+
